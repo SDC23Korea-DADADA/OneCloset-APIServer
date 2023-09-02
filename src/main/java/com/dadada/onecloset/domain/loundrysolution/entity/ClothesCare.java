@@ -4,6 +4,8 @@ import com.dadada.onecloset.domain.clothes.entity.code.Material;
 import com.dadada.onecloset.domain.clothes.entity.code.Type;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class ClothesCare {
 
@@ -24,5 +26,11 @@ public class ClothesCare {
     private String dryerCourse;
 
     private String airDresserCourse;
+
+    @OneToMany(mappedBy = "clothesCare", fetch = FetchType.LAZY)
+    private List<CareTip> careTipList;
+
+    @OneToMany(mappedBy = "clothesCare", fetch = FetchType.LAZY)
+    private List<LoundryTip> loundryTipList;
 
 }

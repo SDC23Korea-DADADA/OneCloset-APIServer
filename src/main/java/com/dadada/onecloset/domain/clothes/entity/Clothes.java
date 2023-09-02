@@ -54,13 +54,13 @@ public class Clothes extends BaseTimeEntity {
     @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY)
     private List<ClosetClothes> closetClothesList;
 
-    @OneToMany(mappedBy = "clothes", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Hashtag> hashtagList;
 
-    @OneToMany(mappedBy = "clothes", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Tpo> tpoList;
 
-    @OneToMany(mappedBy = "clothes", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Weather> weatherList;
 
     @Builder
