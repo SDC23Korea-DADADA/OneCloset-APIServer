@@ -1,6 +1,6 @@
-package com.dadada.onecloset.domain.codi.entity;
+package com.dadada.onecloset.domain.clothes.entity;
 
-import com.dadada.onecloset.domain.clothes.entity.Clothes;
+import com.dadada.onecloset.domain.clothes.entity.type.WeatherType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,23 +10,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CodiClothes {
+public class Weather {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "codi_clothes_id")
+    @Column(name = "weather_id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "codi_id")
-    private Codi codi;
-
-    @ManyToOne
-    @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 
+    private WeatherType weatherName;
+
     @Builder
-    public CodiClothes(Codi codi, Clothes clothes) {
-        this.codi = codi;
+    public Weather(Clothes clothes, WeatherType weather) {
         this.clothes = clothes;
+        this.weatherName = weather;
     }
 }
