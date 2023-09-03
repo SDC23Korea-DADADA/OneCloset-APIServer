@@ -4,6 +4,7 @@ import com.dadada.onecloset.domain.closet.entity.Closet;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.codi.entity.Codi;
 import com.dadada.onecloset.domain.fitting.entity.Fitting;
+import com.dadada.onecloset.domain.user.entity.type.GenderType;
 import com.dadada.onecloset.domain.user.entity.type.LoginType;
 import com.dadada.onecloset.domain.user.entity.type.Role;
 import com.dadada.onecloset.global.BaseTimeEntity;
@@ -44,6 +45,9 @@ public class User extends BaseTimeEntity {
     @ColumnDefault("true")
     private boolean status;
 
+    @Enumerated(EnumType.STRING)
+    private GenderType genderType;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Closet> closetList;
 
@@ -63,6 +67,11 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.profileImg = profileImg;
         this.role = Role.USER;
+        this.genderType = GenderType.BLANK;
+    }
+
+    public void updateGender(GenderType genderType) {
+        this.genderType = genderType;
     }
 
     public void leaveService() {
