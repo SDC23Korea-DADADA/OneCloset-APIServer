@@ -24,7 +24,6 @@ public class Hashtag {
     @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 
-    @Enumerated(EnumType.STRING)
     private String hashtagName;
 
     @Builder
