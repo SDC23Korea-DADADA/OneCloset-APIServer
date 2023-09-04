@@ -45,7 +45,7 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false)
     @ColumnDefault("true")
-    private boolean status;
+    private Boolean status;
 
     @Enumerated(EnumType.STRING)
     private GenderType genderType;

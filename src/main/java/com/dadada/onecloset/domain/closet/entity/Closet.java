@@ -21,6 +21,8 @@ public class Closet extends BaseTimeEntity {
 
     private String name;
 
+    private Integer icon;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -29,13 +31,15 @@ public class Closet extends BaseTimeEntity {
     private List<ClosetClothes> closetClothesList;
 
     @Builder
-    public Closet(String name, User user) {
+    public Closet(String name, User user, int icon) {
         this.name = name;
         this.user = user;
+        this.icon = icon;
     }
 
-    public void editName(String name) {
+    public void editInfo(String name, int icon) {
         this.name = name;
+        this.icon = icon;
     }
 
 }
