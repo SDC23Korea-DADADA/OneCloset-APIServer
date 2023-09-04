@@ -20,6 +20,7 @@ public class Tpo {
     @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 
+    @Enumerated(EnumType.STRING)
     private TpoType tpoName;
 
     @Builder

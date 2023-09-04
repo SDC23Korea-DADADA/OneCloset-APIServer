@@ -19,6 +19,7 @@ public class Weather {
     @ManyToOne
     private Clothes clothes;
 
+    @Enumerated(EnumType.STRING)
     private WeatherType weatherName;
 
     @Builder

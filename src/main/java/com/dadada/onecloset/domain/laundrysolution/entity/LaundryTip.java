@@ -1,12 +1,12 @@
-package com.dadada.onecloset.domain.loundrysolution.entity;
+package com.dadada.onecloset.domain.laundrysolution.entity;
 
 import jakarta.persistence.*;
 
 @Entity
-public class LoundryTip {
+public class LaundryTip {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "loundry_tip_id")
+    @Column(name = "laundry_tip_id")
     private Long id;
 
     @ManyToOne

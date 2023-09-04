@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.loundrysolution.entity;
+package com.dadada.onecloset.domain.laundrysolution.entity;
 
 import com.dadada.onecloset.domain.clothes.entity.code.Material;
 import com.dadada.onecloset.domain.clothes.entity.code.Type;
@@ -21,7 +21,7 @@ public class ClothesCare {
     @JoinColumn(name = "type_code")
     private Type typeCode;
 
-    private String loundryCourse;
+    private String laundryCourse;
 
     private String dryerCourse;
 
@@ -31,6 +31,6 @@ public class ClothesCare {
     private List<CareTip> careTipList;
 
     @OneToMany(mappedBy = "clothesCare", fetch = FetchType.LAZY)
-    private List<LoundryTip> loundryTipList;
+    private List<LaundryTip> laundryTipList;
 
 }

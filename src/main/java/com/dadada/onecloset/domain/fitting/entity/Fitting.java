@@ -1,6 +1,7 @@
 package com.dadada.onecloset.domain.fitting.entity;
 
 import com.dadada.onecloset.domain.codi.entity.CodiClothes;
+import com.dadada.onecloset.domain.fitting.entity.code.Mannequin;
 import com.dadada.onecloset.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -20,13 +21,15 @@ public class Fitting {
     @Column(name = "fitting_id")
     private Long id;
 
-    private String originImg;
-
     private String fittingImg;
 
     private String fittingThumnailImg;
 
     private LocalDateTime wearingAt;
+
+    @ManyToOne
+    @JoinColumn(name = "mannequin_code")
+    private Mannequin mannequin;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -35,8 +38,8 @@ public class Fitting {
     @OneToMany(mappedBy = "fitting", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<FittingClothes> fittingClothesList;
 
-    @Builder Fitting(String originImg, String fittingImg, String fittingThumnailImg, LocalDateTime wearingAt, User user) {
-        this.originImg = originImg;
+    @Builder Fitting(Mannequin mannequin, String fittingImg, String fittingThumnailImg, LocalDateTime wearingAt, User user) {
+        this.mannequin = mannequin;
         this.fittingImg = fittingImg;
         this.fittingThumnailImg = fittingThumnailImg;
         this.wearingAt = wearingAt;

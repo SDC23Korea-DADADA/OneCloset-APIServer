@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.loundrysolution.entity;
+package com.dadada.onecloset.domain.laundrysolution.entity;
 
 import jakarta.persistence.*;
 
