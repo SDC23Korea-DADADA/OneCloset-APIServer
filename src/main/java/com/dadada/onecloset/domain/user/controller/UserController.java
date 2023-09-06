@@ -2,6 +2,8 @@ package com.dadada.onecloset.domain.user.controller;
 
 import com.dadada.onecloset.domain.user.dto.UserInfoResponseDto;
 import com.dadada.onecloset.domain.user.service.UserService;
+import com.dadada.onecloset.global.CommonResponse;
+import com.dadada.onecloset.global.DataResponse;
 import com.dadada.onecloset.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,10 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @GetMapping
-    public ResponseEntity<UserInfoResponseDto> getUserInfo(HttpServletRequest request) {
+    public DataResponse<UserInfoResponseDto> getUserInfo(HttpServletRequest request) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
         UserInfoResponseDto responseDto = userService.getUserInfo(userId);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new DataResponse<>(200, "유저 정보 조회 성공", responseDto);
     }
 
     @PostMapping("/logout")
@@ -30,10 +32,16 @@ public class UserController {
     }
 
     @PostMapping("/leave")
-    public ResponseEntity<?> leaveService(HttpServletRequest request) {
+    public CommonResponse leaveService(HttpServletRequest request) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
         userService.leaveService(userId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new CommonResponse(200, "탈퇴 성공");
+    }
+
+    @PostMapping("/temp/rejoin/{userId}")
+    public CommonResponse rejoinService(@PathVariable Long userId) {
+        userService.tempRejoinService(userId);
+        return new CommonResponse(200, "재가입 성공");
     }
 
 }
