@@ -44,7 +44,6 @@ public class User extends BaseTimeEntity {
     private String profileImg;
 
     @Column(nullable = false)
-    @ColumnDefault("true")
     private Boolean status;
 
     @Enumerated(EnumType.STRING)
@@ -63,13 +62,15 @@ public class User extends BaseTimeEntity {
     private List<Fitting> fittingList;
 
     @Builder
-    public User(String loginId, LoginType loginType, String nickname, String profileImg) {
+    public User(String loginId, LoginType loginType, String nickname, String profileImg, String email) {
         this.loginId = loginId;
         this.loginType = loginType;
         this.nickname = nickname;
         this.profileImg = profileImg;
+        this.email = email;
         this.role = Role.USER;
         this.genderType = GenderType.BLANK;
+        this.status = true;
     }
 
     public void updateGender(GenderType genderType) {
