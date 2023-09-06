@@ -1,19 +1,18 @@
 package com.dadada.onecloset.domain.closet.entity;
 
 import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
+import com.dadada.onecloset.domain.closet.dto.ClosetEditRequestDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.global.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Closet extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +40,10 @@ public class Closet extends BaseTimeEntity {
         this.iconColor = requestDto.getColorCode();
     }
 
-    public void editInfo(String name, Integer icon, String iconColor) {
-        this.name = name;
-        this.icon = icon;
-        this.iconColor = iconColor;
+    public void editInfo(ClosetEditRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.icon = requestDto.getIcon();
+        this.iconColor = requestDto.getColorCode();
     }
 
 }

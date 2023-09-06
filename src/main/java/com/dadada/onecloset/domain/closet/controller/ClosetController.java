@@ -1,6 +1,7 @@
 package com.dadada.onecloset.domain.closet.controller;
 
 import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
+import com.dadada.onecloset.domain.closet.dto.ClosetEditRequestDto;
 import com.dadada.onecloset.domain.closet.dto.ClosetListResponseDto;
 import com.dadada.onecloset.domain.closet.service.ClosetService;
 import com.dadada.onecloset.global.CommonResponse;
@@ -23,15 +24,19 @@ public class ClosetController {
     @PostMapping
     public CommonResponse createCloset(HttpServletRequest request, @RequestBody ClosetCreateRequestDto requestDto) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
-        closetService.createCloset(requestDto, userId);
-        return new CommonResponse(200, "옷장 생성 성공");
+        return closetService.createCloset(requestDto, userId);
     }
 
     @GetMapping("/list")
     public DataResponse<List<ClosetListResponseDto>> getClosetList(HttpServletRequest request){
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
-        List<ClosetListResponseDto> responseDtoList = closetService.getClosetList(userId);
-        return new DataResponse<>(200, "옷장 목록 조회 성공", responseDtoList);
+        return closetService.getClosetList(userId);
+    }
+
+    @PutMapping
+    public CommonResponse editClosetInfo(HttpServletRequest request, @RequestBody ClosetEditRequestDto requestDto) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return closetService.editClosetInfo(requestDto, userId);
     }
 
 }
