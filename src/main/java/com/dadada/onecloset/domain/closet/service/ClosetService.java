@@ -68,9 +68,19 @@ public class ClosetService {
             return new DataResponse<>(400, "잘못된 접근 입니다.");
 
         closet.editInfo(requestDto);
-        return new CommonResponse(200, "옷장 정보 수정 성공");
+        return new CommonResponse(200, "옷장 정보 수정 완료");
     }
 
+    @Transactional
+    public CommonResponse deleteCloset(Long closetId, Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId).orElse(null);
+        Closet closet = closetRepository.findByIdAndUser(closetId, user).orElse(null);
 
+        if (user == null || closet == null)
+            return new DataResponse<>(400, "잘못된 접근 입니다.");
+
+        closetRepository.delete(closet);
+        return new CommonResponse(200, "옷장 삭제 완료");
+    }
 
 }

@@ -39,4 +39,10 @@ public class ClosetController {
         return closetService.editClosetInfo(requestDto, userId);
     }
 
+    @DeleteMapping("/{id}")
+    public CommonResponse deleteCloset(HttpServletRequest request, @PathVariable("id") Long closetId) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return closetService.deleteCloset(closetId, userId);
+    }
+
 }
