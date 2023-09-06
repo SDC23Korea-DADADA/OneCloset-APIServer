@@ -1,5 +1,6 @@
 package com.dadada.onecloset.domain.closet.entity;
 
+import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.global.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -23,6 +24,8 @@ public class Closet extends BaseTimeEntity {
 
     private Integer icon;
 
+    private String iconColor;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -31,15 +34,17 @@ public class Closet extends BaseTimeEntity {
     private List<ClosetClothes> closetClothesList;
 
     @Builder
-    public Closet(String name, User user, int icon) {
-        this.name = name;
+    public Closet(User user, ClosetCreateRequestDto requestDto) {
         this.user = user;
-        this.icon = icon;
+        this.name = requestDto.getName();
+        this.icon = requestDto.getIcon();
+        this.iconColor = requestDto.getColorCode();
     }
 
-    public void editInfo(String name, int icon) {
+    public void editInfo(String name, Integer icon, String iconColor) {
         this.name = name;
         this.icon = icon;
+        this.iconColor = iconColor;
     }
 
 }
