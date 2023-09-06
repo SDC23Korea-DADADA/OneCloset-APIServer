@@ -69,7 +69,6 @@ public class KakaoLoginService {
         HashMap<String, Object> result = new HashMap<>();
         String jwt = jwtUtil.createToken(user.getId().toString());
         result.put("access-token", jwt);
-        result.put("status", user.getStatus());
         return result;
     }
 

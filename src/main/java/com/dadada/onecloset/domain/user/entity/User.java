@@ -80,4 +80,8 @@ public class User extends BaseTimeEntity {
     public void leaveService() {
         this.status = false;
     }
+
+    public void tempRejoin() {
+        this.status = true;
+    }
 }
