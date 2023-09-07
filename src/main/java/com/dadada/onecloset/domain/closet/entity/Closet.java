@@ -25,7 +25,7 @@ public class Closet extends BaseTimeEntity {
 
     private String iconColor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
