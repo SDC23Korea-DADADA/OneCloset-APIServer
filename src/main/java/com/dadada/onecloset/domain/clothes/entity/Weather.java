@@ -16,7 +16,7 @@ public class Weather {
     @Column(name = "weather_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Clothes clothes;
 
     @Enumerated(EnumType.STRING)

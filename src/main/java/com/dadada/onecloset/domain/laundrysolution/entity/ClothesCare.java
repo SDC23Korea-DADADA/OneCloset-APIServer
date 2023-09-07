@@ -13,11 +13,11 @@ public class ClothesCare {
     @Column(name = "clothes_care_code")
     private Long code;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "material_code")
     private Material materialCode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "type_code")
     private Type typeCode;
 
