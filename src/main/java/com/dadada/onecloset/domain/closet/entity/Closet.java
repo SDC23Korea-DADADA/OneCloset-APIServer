@@ -1,18 +1,18 @@
 package com.dadada.onecloset.domain.closet.entity;
 
+import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
+import com.dadada.onecloset.domain.closet.dto.ClosetEditRequestDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.global.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Closet extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,9 @@ public class Closet extends BaseTimeEntity {
 
     private Integer icon;
 
-    @ManyToOne
+    private String iconColor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -31,15 +33,17 @@ public class Closet extends BaseTimeEntity {
     private List<ClosetClothes> closetClothesList;
 
     @Builder
-    public Closet(String name, User user, int icon) {
-        this.name = name;
+    public Closet(User user, String name, Integer icon, String colorCode) {
         this.user = user;
+        this.name = name;
         this.icon = icon;
+        this.iconColor = colorCode;
     }
 
-    public void editInfo(String name, int icon) {
-        this.name = name;
-        this.icon = icon;
+    public void editInfo(ClosetEditRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.icon = requestDto.getIcon();
+        this.iconColor = requestDto.getColorCode();
     }
 
 }

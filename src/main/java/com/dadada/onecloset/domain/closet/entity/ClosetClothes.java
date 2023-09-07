@@ -17,11 +17,11 @@ public class ClosetClothes extends BaseTimeEntity {
     @Column(name = "closet_clothes_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "closet_id")
     private Closet closet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 
