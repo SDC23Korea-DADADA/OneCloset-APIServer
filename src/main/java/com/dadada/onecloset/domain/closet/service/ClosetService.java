@@ -34,7 +34,9 @@ public class ClosetService {
         Closet closet = Closet
                 .builder()
                 .user(user)
-                .requestDto(requestDto)
+                .name(requestDto.getName())
+                .icon(requestDto.getIcon())
+                .colorCode(requestDto.getColorCode())
                 .build();
 
         closetRepository.save(closet);
@@ -48,12 +50,8 @@ public class ClosetService {
         List<Closet> closetList = closetRepository.findByUser(user);
         List<ClosetListResponseDto> responseDtoList = new ArrayList<>();
 
-        for (Closet closet: closetList) {
-            ClosetListResponseDto responseDto = ClosetListResponseDto
-                    .builder()
-                    .closet(closet)
-                    .build();
-            responseDtoList.add(responseDto);
+        for (Closet closet : closetList) {
+            responseDtoList.add(ClosetListResponseDto.of(closet));
         }
 
         return new DataResponse<>(200, "옷장 목록 조회 성공", responseDtoList);

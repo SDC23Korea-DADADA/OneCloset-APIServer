@@ -33,11 +33,11 @@ public class Closet extends BaseTimeEntity {
     private List<ClosetClothes> closetClothesList;
 
     @Builder
-    public Closet(User user, ClosetCreateRequestDto requestDto) {
+    public Closet(User user, String name, Integer icon, String colorCode) {
         this.user = user;
-        this.name = requestDto.getName();
-        this.icon = requestDto.getIcon();
-        this.iconColor = requestDto.getColorCode();
+        this.name = name;
+        this.icon = icon;
+        this.iconColor = colorCode;
     }
 
     public void editInfo(ClosetEditRequestDto requestDto) {

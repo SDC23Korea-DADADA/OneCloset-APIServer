@@ -1,12 +1,15 @@
 package com.dadada.onecloset.domain.closet.dto;
 
 import com.dadada.onecloset.domain.closet.entity.Closet;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClosetListResponseDto {
 
     private Long closetId;
@@ -14,12 +17,13 @@ public class ClosetListResponseDto {
     private Integer icon;
     private String colorCode;
 
-    @Builder
-    public ClosetListResponseDto(Closet closet){
-        this.closetId = closet.getId();
-        this.name = closet.getName();
-        this.icon = closet.getIcon();
-        this.colorCode = closet.getIconColor();
+    public static ClosetListResponseDto of(Closet closet) {
+        return ClosetListResponseDto.builder()
+                .closetId(closet.getId())
+                .name(closet.getName())
+                .icon(closet.getIcon())
+                .colorCode(closet.getIconColor())
+                .build();
     }
 
 }
