@@ -7,6 +7,8 @@ import com.dadada.onecloset.domain.closet.entity.Closet;
 import com.dadada.onecloset.domain.closet.repository.ClosetRepository;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.repository.UserRepository;
+import com.dadada.onecloset.exception.CustomException;
+import com.dadada.onecloset.exception.ExceptionType;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +28,8 @@ public class ClosetService {
 
     @Transactional
     public CommonResponse createCloset(ClosetCreateRequestDto requestDto, Long userId) {
-        User user = userRepository.findByIdWhereStatusIsTrue(userId).orElse(null);
-        if (user == null)
-            return new CommonResponse(400, "잘못된 접근 입니다.");
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
 
         Closet closet = Closet
                 .builder()
@@ -41,9 +42,8 @@ public class ClosetService {
     }
 
     public DataResponse<List<ClosetListResponseDto>> getClosetList(Long userId) {
-        User user = userRepository.findByIdWhereStatusIsTrue(userId).orElse(null);
-        if (user == null)
-            return new DataResponse<>(400, "잘못된 접근 입니다.");
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
 
         List<Closet> closetList = closetRepository.findByUser(user);
         List<ClosetListResponseDto> responseDtoList = new ArrayList<>();
@@ -61,11 +61,10 @@ public class ClosetService {
 
     @Transactional
     public CommonResponse editClosetInfo(ClosetEditRequestDto requestDto, Long userId) {
-        User user = userRepository.findByIdWhereStatusIsTrue(userId).orElse(null);
-        Closet closet = closetRepository.findByIdAndUser(requestDto.getClosetId(), user).orElse(null);
-
-        if (user == null || closet == null)
-            return new CommonResponse(400, "잘못된 접근 입니다.");
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Closet closet = closetRepository.findByIdAndUser(requestDto.getClosetId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOSET_NOT_FOUND));
 
         closet.editInfo(requestDto);
         return new CommonResponse(200, "옷장 정보 수정 완료");
@@ -73,11 +72,10 @@ public class ClosetService {
 
     @Transactional
     public CommonResponse deleteCloset(Long closetId, Long userId) {
-        User user = userRepository.findByIdWhereStatusIsTrue(userId).orElse(null);
-        Closet closet = closetRepository.findByIdAndUser(closetId, user).orElse(null);
-
-        if (user == null || closet == null)
-            return new CommonResponse(400, "잘못된 접근 입니다.");
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Closet closet = closetRepository.findByIdAndUser(closetId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOSET_NOT_FOUND));
 
         closetRepository.delete(closet);
         return new CommonResponse(200, "옷장 삭제 완료");
