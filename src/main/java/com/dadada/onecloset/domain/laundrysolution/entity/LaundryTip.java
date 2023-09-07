@@ -9,7 +9,7 @@ public class LaundryTip {
     @Column(name = "laundry_tip_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_care_code")
     private ClothesCare clothesCare;
 

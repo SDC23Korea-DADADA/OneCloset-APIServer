@@ -16,11 +16,11 @@ public class FittingClothes {
     @Column(name = "fitting_clothes_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fitting_id")
     private Fitting fitting;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_id")
     private Clothes clothes;
 
