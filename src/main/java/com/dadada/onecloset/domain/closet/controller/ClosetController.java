@@ -10,6 +10,7 @@ import com.dadada.onecloset.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class ClosetController {
     @PostMapping
     public CommonResponse createCloset(HttpServletRequest request, @RequestBody ClosetCreateRequestDto requestDto) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        System.out.println(requestDto);
         return closetService.createCloset(requestDto, userId);
     }
 

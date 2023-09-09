@@ -3,10 +3,13 @@ package com.dadada.onecloset.domain.laundrysolution.entity;
 import com.dadada.onecloset.domain.clothes.entity.code.Material;
 import com.dadada.onecloset.domain.clothes.entity.code.Type;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Entity
+@Getter
 public class ClothesCare {
 
     @Id

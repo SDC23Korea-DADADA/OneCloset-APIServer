@@ -64,10 +64,11 @@ public class Clothes extends BaseTimeEntity {
     private List<Weather> weatherList;
 
     @Builder
-    public Clothes(String originImg, String thumnailImg, String description, Color color, Type type, Material material) {
+    public Clothes(String originImg, String thumnailImg, User user, String description, Color color, Type type, Material material) {
         this.originImg = originImg;
         this.thumnailImg = thumnailImg;
         this.description = description;
+        this.user = user;
         this.color = color;
         this.type = type;
         this.material = material;

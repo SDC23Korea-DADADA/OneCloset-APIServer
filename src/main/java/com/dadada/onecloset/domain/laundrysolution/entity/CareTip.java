@@ -1,8 +1,10 @@
 package com.dadada.onecloset.domain.laundrysolution.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class CareTip {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
