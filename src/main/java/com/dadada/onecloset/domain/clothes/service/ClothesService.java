@@ -148,5 +148,12 @@ public class ClothesService {
         return new DataResponse<>(200, "의류 여부 확인", isClothes);
     }
 
+    public DataResponse<List<String>> getHashtagList(Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        List<String> hashtagList = hashtagRepository.findByUserDistinctHashtagName(user);
+        return new DataResponse<>(200, "해시 태그 목록 조회", hashtagList);
+    }
+
 
 }

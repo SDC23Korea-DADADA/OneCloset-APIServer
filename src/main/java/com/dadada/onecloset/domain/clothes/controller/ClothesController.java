@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +36,12 @@ public class ClothesController {
     public CommonResponse registClothes(HttpServletRequest request, @ModelAttribute ClothesRegistRequestDto requestDto) throws IOException {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
         return clothesService.registClothes(requestDto, userId);
+    }
+
+    @GetMapping("/hashtag")
+    public DataResponse<List<String>> getHashtagList(HttpServletRequest request) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.getHashtagList(userId);
     }
 
 //    @PostMapping("/check")
