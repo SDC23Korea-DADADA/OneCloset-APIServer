@@ -1,6 +1,11 @@
 package com.dadada.onecloset.domain.clothes.service;
 
+import com.dadada.onecloset.domain.closet.entity.Closet;
+import com.dadada.onecloset.domain.closet.entity.ClosetClothes;
+import com.dadada.onecloset.domain.closet.repository.ClosetClothesRepository;
+import com.dadada.onecloset.domain.closet.repository.ClosetRepository;
 import com.dadada.onecloset.domain.clothes.dto.ClothesAnalyzeResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.ClothesListResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.ClothesRegistRequestDto;
 import com.dadada.onecloset.domain.clothes.dto.FastAPIClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
@@ -13,9 +18,7 @@ import com.dadada.onecloset.domain.clothes.entity.code.Type;
 import com.dadada.onecloset.domain.clothes.entity.type.TpoType;
 import com.dadada.onecloset.domain.clothes.entity.type.WeatherType;
 import com.dadada.onecloset.domain.clothes.repository.*;
-import com.dadada.onecloset.domain.laundrysolution.entity.CareTip;
 import com.dadada.onecloset.domain.laundrysolution.entity.ClothesCare;
-import com.dadada.onecloset.domain.laundrysolution.entity.LaundryTip;
 import com.dadada.onecloset.domain.laundrysolution.repository.ClothesSolutionRepository;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.repository.UserRepository;
@@ -40,6 +43,8 @@ public class ClothesService {
 
     private final UserRepository userRepository;
     private final ClothesRepository clothesRepository;
+    private final ClosetRepository closetRepository;
+    private final ClosetClothesRepository closetClothesRepository;
 
     private final ColorRepository colorRepository;
     private final MaterialRepository materialRepository;
@@ -53,7 +58,7 @@ public class ClothesService {
     private final S3Service s3Service;
 
     @Transactional
-    public CommonResponse registClothes(ClothesRegistRequestDto requestDto, Long userId) throws IOException {
+    public CommonResponse registClothes(ClothesRegistRequestDto requestDto, Long userId) throws Exception {
 
         // thumnail 이미지는 아직 구현 안함
         String originImgUrl = s3Service.upload(requestDto.getImage());
@@ -109,42 +114,22 @@ public class ClothesService {
     }
 
     public DataResponse<ClothesAnalyzeResponseDto> analyzeClothes(MultipartFile multipartFile) throws IOException {
-        // 파이썬 서버로 전송하여 배경제거한 이미지, 재질, 종류, 색상 받기
+        // AI서버로 전송하여 배경제거한 이미지, 재질, 종류, 색상 받기
         FastAPIClothesAnalyzeResponseDto fastAPIresponseDto = new FastAPIClothesAnalyzeResponseDto(multipartFile,"바지","파랑","데님");
-        Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
-                .orElseThrow();
-        Type type = typeRepository.findByTypeName(fastAPIresponseDto.getType())
-                .orElseThrow();
-        Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial())
-                .orElseThrow();
-        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(material, type)
-                .orElseThrow();
 
-        List<String> laundryTip = new ArrayList<>();
-        for (LaundryTip laundry : clothesCare.getLaundryTipList()) {
-            laundryTip.add(laundry.getTip());
-        }
+        Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor()).orElseThrow();
+        Type type = typeRepository.findByTypeName(fastAPIresponseDto.getType()).orElseThrow();
+        Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial()).orElseThrow();
+        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(material, type).orElseThrow();
 
-        List<String> careTip = new ArrayList<>();
-        for (CareTip care : clothesCare.getCareTipList()) {
-            careTip.add(care.getTip());
-        }
-
-        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto
-                .builder()
-                .responseDto(fastAPIresponseDto)
-                .color(color)
-                .clothesCare(clothesCare)
-                .laundryTip(laundryTip)
-                .careTip(careTip)
-                .build();
+        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare);
 
         return new DataResponse<>(200, "의류 분석 완료", responseDto);
     }
 
     public DataResponse<Boolean> checkClothes(MultipartFile multipartFile) {
         Boolean isClothes = true;
-        // 파이썬 서버로 전송하여 의류 여부확인
+        // AI서버로 전송하여 의류 여부확인
         return new DataResponse<>(200, "의류 여부 확인", isClothes);
     }
 
@@ -155,5 +140,34 @@ public class ClothesService {
         return new DataResponse<>(200, "해시 태그 목록 조회", hashtagList);
     }
 
+    public DataResponse<List<ClothesListResponseDto>> getClothesListInDefaultCloset(Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+
+        List<ClothesListResponseDto> responseDtoList = new ArrayList<>();
+        List<Clothes> clothesList = clothesRepository.findByUser(user);
+
+        for (Clothes clothes: clothesList) {
+            responseDtoList.add(ClothesListResponseDto.of(clothes));
+        }
+
+        return new DataResponse<>(200, "기본 옷장 조회", responseDtoList);
+    }
+
+    public DataResponse<List<ClothesListResponseDto>> getClothesListInCustomCloset(Long closetId, Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Closet closet = closetRepository.findByIdAndUser(closetId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOSET_NOT_FOUND));
+
+        List<ClothesListResponseDto> responseDtoList = new ArrayList<>();
+        List<ClosetClothes> closetClothesList = closetClothesRepository.findByCloset(closet);
+
+        for (ClosetClothes closetClothes: closetClothesList) {
+            responseDtoList.add(ClothesListResponseDto.of(closetClothes.getClothes()));
+        }
+
+        return new DataResponse<>(200, "사용자 등록 옷장 조회", responseDtoList);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.dadada.onecloset.domain.clothes.controller;
 
 import com.dadada.onecloset.domain.clothes.dto.ClothesAnalyzeResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.ClothesListResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.ClothesRegistRequestDto;
 import com.dadada.onecloset.domain.clothes.service.ClothesService;
 import com.dadada.onecloset.global.CommonResponse;
@@ -33,7 +34,7 @@ public class ClothesController {
     }
 
     @PostMapping
-    public CommonResponse registClothes(HttpServletRequest request, @ModelAttribute ClothesRegistRequestDto requestDto) throws IOException {
+    public CommonResponse registClothes(HttpServletRequest request, @ModelAttribute ClothesRegistRequestDto requestDto) throws Exception {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
         return clothesService.registClothes(requestDto, userId);
     }
@@ -42,6 +43,20 @@ public class ClothesController {
     public DataResponse<List<String>> getHashtagList(HttpServletRequest request) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
         return clothesService.getHashtagList(userId);
+    }
+
+    // 페이징처리 추가하기
+    @GetMapping("/list")
+    public DataResponse<List<ClothesListResponseDto>> getClothesListInDefaultCloset(HttpServletRequest request) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.getClothesListInDefaultCloset(userId);
+    }
+
+    // 페이징처리 추가하기
+    @GetMapping("/list/{id}")
+    public DataResponse<List<ClothesListResponseDto>> getClothesListInCustomCloset(HttpServletRequest request, @PathVariable("id") Long closetId) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.getClothesListInCustomCloset(closetId, userId);
     }
 
 //    @PostMapping("/check")

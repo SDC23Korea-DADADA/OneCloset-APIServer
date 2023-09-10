@@ -11,10 +11,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ClothesAnalyzeResponseDto {
 
     private byte[] image;
@@ -32,18 +35,31 @@ public class ClothesAnalyzeResponseDto {
     private List<String> laundryTip;
     private List<String> careTip;
 
-    @Builder
-    public ClothesAnalyzeResponseDto(FastAPIClothesAnalyzeResponseDto responseDto, Color color, ClothesCare clothesCare, List<String> laundryTip, List<String> careTip) throws IOException {
-        this.image = responseDto.getMultipartFile().getBytes();
-        this.color = color.getColorName();
-        this.colorCode = color.getCode();
-        this.type = responseDto.getType();
-        this.material = responseDto.getMaterial();
-        this.laundry = clothesCare.getLaundryCourse();
-        this.dryer = clothesCare.getDryerCourse();
-        this.airDresser = clothesCare.getAirDresserCourse();
-        this.laundryTip = laundryTip;
-        this.careTip = careTip;
+    public static ClothesAnalyzeResponseDto of(FastAPIClothesAnalyzeResponseDto responseDto, Color color, ClothesCare clothesCare) throws IOException {
+
+        List<String> laundryTip = new ArrayList<>();
+        for (LaundryTip laundry : clothesCare.getLaundryTipList()) {
+            laundryTip.add(laundry.getTip());
+        }
+
+        List<String> careTip = new ArrayList<>();
+        for (CareTip care : clothesCare.getCareTipList()) {
+            careTip.add(care.getTip());
+        }
+
+        return ClothesAnalyzeResponseDto
+                .builder()
+                .image(responseDto.getMultipartFile().getBytes())
+                .color(color.getColorName())
+                .colorCode(color.getCode())
+                .type(responseDto.getType())
+                .material(responseDto.getMaterial())
+                .laundry(clothesCare.getLaundryCourse())
+                .dryer(clothesCare.getDryerCourse())
+                .airDresser(clothesCare.getAirDresserCourse())
+                .laundryTip(laundryTip)
+                .careTip(careTip)
+                .build();
     }
 
 }
