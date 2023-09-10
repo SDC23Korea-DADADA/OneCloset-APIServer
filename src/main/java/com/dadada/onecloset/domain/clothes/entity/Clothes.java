@@ -44,14 +44,13 @@ public class Clothes extends BaseTimeEntity {
     @JoinColumn(name = "material_code")
     private Material material;
 
-    @ColumnDefault("true")
     private Boolean isRegisted;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ClosetClothes> closetClothesList;
 
     @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -72,6 +71,7 @@ public class Clothes extends BaseTimeEntity {
         this.color = color;
         this.type = type;
         this.material = material;
+        this.isRegisted = true;
     }
 
     public void deleteClothes() {

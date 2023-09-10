@@ -23,8 +23,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ClosetService {
 
-    private final ClosetRepository closetRepository;
     private final UserRepository userRepository;
+    private final ClosetRepository closetRepository;
 
     @Transactional
     public CommonResponse createCloset(ClosetCreateRequestDto requestDto, Long userId) {

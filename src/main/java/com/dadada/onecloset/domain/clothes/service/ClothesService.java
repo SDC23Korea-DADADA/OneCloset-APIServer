@@ -145,7 +145,7 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
 
         List<ClothesListResponseDto> responseDtoList = new ArrayList<>();
-        List<Clothes> clothesList = clothesRepository.findByUser(user);
+        List<Clothes> clothesList = clothesRepository.findByUserWhereIsRegistIsTrue(user);
 
         for (Clothes clothes: clothesList) {
             responseDtoList.add(ClothesListResponseDto.of(clothes));
