@@ -78,6 +78,10 @@ public class Clothes extends BaseTimeEntity {
         this.isRegisted = false;
     }
 
+    public void restoreClothes() {
+        this.isRegisted = true;
+    }
+
     public void editDescription(String description) {
         this.description = description;
     }

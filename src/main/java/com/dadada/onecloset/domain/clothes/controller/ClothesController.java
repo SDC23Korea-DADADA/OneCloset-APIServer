@@ -66,10 +66,21 @@ public class ClothesController {
         return clothesService.getClothesDetail(clothesId, userId);
     }
 
-//    @PostMapping("/check")
-//    public DataResponse<byte[]> clothesCheck(@RequestParam("image") MultipartFile multipartFile) throws IOException {
-//        byte[] fileBytes = multipartFile.getBytes();
-//        return new DataResponse<>(200,"의류 여부", fileBytes);
-////        return new ResponseEntity<>(multipartFile, HttpStatus.OK);
-//    }
+    @DeleteMapping("/{id}")
+    public CommonResponse deleteClothes(HttpServletRequest request, @PathVariable("id") Long clothesId) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.deleteClothes(clothesId, userId);
+    }
+
+    @PutMapping("/{id}")
+    public CommonResponse updateClothes(HttpServletRequest request, @PathVariable("id") Long clothesId) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.updateClothes(clothesId, userId);
+    }
+
+    @PutMapping("/temp/{id}")
+    public CommonResponse restoreClothes(HttpServletRequest request, @PathVariable("id") Long clothesId) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.restoreClothes(clothesId, userId);
+    }
 }

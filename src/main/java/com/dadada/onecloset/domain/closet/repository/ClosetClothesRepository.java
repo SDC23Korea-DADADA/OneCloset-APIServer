@@ -14,4 +14,6 @@ public interface ClosetClothesRepository extends JpaRepository<ClosetClothes, Lo
 
     Optional<ClosetClothes> findByClosetAndClothes(Closet closet, Clothes clothes);
 
+    List<ClosetClothes> findByClothes(Clothes clothes);
+
 }

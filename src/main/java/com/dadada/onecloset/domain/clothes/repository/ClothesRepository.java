@@ -17,4 +17,6 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long> {
     @Query("SELECT clothes FROM Clothes clothes where clothes.user=:user AND clothes.id=:id AND clothes.isRegisted = true")
     Optional<Clothes> findByIdAndUserWhereIsRegistIsTrue(@Param("id")Long id, @Param("user") User user);
 
+    Optional<Clothes> findByIdAndUser(Long id, User user);
+
 }

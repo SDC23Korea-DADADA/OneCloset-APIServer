@@ -180,4 +180,44 @@ public class ClothesService {
         return new DataResponse<>(200, "의류 상세 조회", responseDto);
     }
 
+    @Transactional
+    public CommonResponse deleteClothes(Long clothesId, Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(clothesId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+        clothes.deleteClothes();
+
+        // closetClothesRepository.deleteAll(clothes.getClosetClothesList()); // 이건 삭제 안됨
+
+        List<ClosetClothes> closetClothesList = closetClothesRepository.findByClothes(clothes);
+        List<Hashtag> hashtagList = hashtagRepository.findByClothes(clothes);
+        List<Weather> weatherList = weatherRepository.findByClothes(clothes);
+        List<Tpo> tpoList = tpoRepository.findByClothes(clothes);
+
+        closetClothesRepository.deleteAll(closetClothesList);
+        hashtagRepository.deleteAll(hashtagList);
+        weatherRepository.deleteAll(weatherList);
+        tpoRepository.deleteAll(tpoList);
+
+        return new CommonResponse(200, "의류 삭제 완료");
+    }
+
+    public CommonResponse updateClothes(Long clothesId, Long userId) {
+
+
+
+        return new CommonResponse(200, "의류 수정 완료");
+    }
+
+    @Transactional
+    public CommonResponse restoreClothes(Long clothesId, Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Clothes clothes = clothesRepository.findByIdAndUser(clothesId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+        clothes.restoreClothes();
+        return new CommonResponse(200, "의류 복구 성공");
+    }
+
 }
