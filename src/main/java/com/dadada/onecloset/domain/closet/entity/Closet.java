@@ -1,7 +1,6 @@
 package com.dadada.onecloset.domain.closet.entity;
 
-import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
-import com.dadada.onecloset.domain.closet.dto.ClosetEditRequestDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetEditRequestDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.global.BaseTimeEntity;
 import jakarta.persistence.*;

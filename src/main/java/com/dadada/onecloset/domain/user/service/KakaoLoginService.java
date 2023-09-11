@@ -1,6 +1,6 @@
 package com.dadada.onecloset.domain.user.service;
 
-import com.dadada.onecloset.domain.user.dto.KakaoCodeRequestDto;
+import com.dadada.onecloset.domain.user.dto.request.KakaoCodeRequestDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.entity.type.LoginType;
 import com.dadada.onecloset.domain.user.repository.UserRepository;

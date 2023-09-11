@@ -26,6 +26,7 @@ public class S3Service {
 
         // 주소로 접근 했을때 이미지 보여줌
         objMeta.setContentType(multipartFile.getContentType());
+        objMeta.setContentLength(multipartFile.getSize());
         // 주소로 접근 했을때 다운로드됨
         // objMeta.setContentLength(multipartFile.getInputStream().available());
 

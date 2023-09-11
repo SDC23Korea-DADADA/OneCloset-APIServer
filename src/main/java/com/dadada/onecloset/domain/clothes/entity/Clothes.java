@@ -44,14 +44,13 @@ public class Clothes extends BaseTimeEntity {
     @JoinColumn(name = "material_code")
     private Material material;
 
-    @ColumnDefault("true")
     private Boolean isRegisted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ClosetClothes> closetClothesList;
 
     @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -64,21 +63,32 @@ public class Clothes extends BaseTimeEntity {
     private List<Weather> weatherList;
 
     @Builder
-    public Clothes(String originImg, String thumnailImg, String description, Color color, Type type, Material material) {
+    public Clothes(String originImg, String thumnailImg, User user, String description, Color color, Type type, Material material) {
         this.originImg = originImg;
         this.thumnailImg = thumnailImg;
         this.description = description;
+        this.user = user;
         this.color = color;
         this.type = type;
         this.material = material;
+        this.isRegisted = true;
     }
 
     public void deleteClothes() {
         this.isRegisted = false;
     }
 
-    public void editDescription(String description) {
+    public void restoreClothes() {
+        this.isRegisted = true;
+    }
+
+    public void updateClothes(String originImg, String thumnailImg, String description, Color color, Type type, Material material) {
+        this.originImg = originImg;
+        this.thumnailImg = thumnailImg;
         this.description = description;
+        this.color = color;
+        this.type = type;
+        this.material = material;
     }
 
 }

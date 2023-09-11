@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.user.dto;
+package com.dadada.onecloset.domain.user.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

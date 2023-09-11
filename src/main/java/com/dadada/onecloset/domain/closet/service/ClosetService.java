@@ -1,8 +1,8 @@
 package com.dadada.onecloset.domain.closet.service;
 
-import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
-import com.dadada.onecloset.domain.closet.dto.ClosetEditRequestDto;
-import com.dadada.onecloset.domain.closet.dto.ClosetListResponseDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetCreateRequestDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetEditRequestDto;
+import com.dadada.onecloset.domain.closet.dto.response.ClosetListResponseDto;
 import com.dadada.onecloset.domain.closet.entity.Closet;
 import com.dadada.onecloset.domain.closet.repository.ClosetRepository;
 import com.dadada.onecloset.domain.user.entity.User;
@@ -23,8 +23,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ClosetService {
 
-    private final ClosetRepository closetRepository;
     private final UserRepository userRepository;
+    private final ClosetRepository closetRepository;
 
     @Transactional
     public CommonResponse createCloset(ClosetCreateRequestDto requestDto, Long userId) {

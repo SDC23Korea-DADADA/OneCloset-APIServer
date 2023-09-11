@@ -1,8 +1,8 @@
 package com.dadada.onecloset.domain.closet.controller;
 
-import com.dadada.onecloset.domain.closet.dto.ClosetCreateRequestDto;
-import com.dadada.onecloset.domain.closet.dto.ClosetEditRequestDto;
-import com.dadada.onecloset.domain.closet.dto.ClosetListResponseDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetCreateRequestDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetEditRequestDto;
+import com.dadada.onecloset.domain.closet.dto.response.ClosetListResponseDto;
 import com.dadada.onecloset.domain.closet.service.ClosetService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -24,6 +24,7 @@ public class ClosetController {
     @PostMapping
     public CommonResponse createCloset(HttpServletRequest request, @RequestBody ClosetCreateRequestDto requestDto) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        System.out.println(requestDto);
         return closetService.createCloset(requestDto, userId);
     }
 
