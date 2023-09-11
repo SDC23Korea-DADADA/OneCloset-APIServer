@@ -28,6 +28,7 @@ import com.dadada.onecloset.exception.CustomException;
 import com.dadada.onecloset.exception.ExceptionType;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
+import com.dadada.onecloset.global.FastApiService;
 import com.dadada.onecloset.global.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,7 @@ public class ClothesService {
     private final HashtagRepository hashtagRepository;
 
     private final S3Service s3Service;
+    private final FastApiService fastApiService;
 
     @Transactional
     public CommonResponse registClothes(ClothesRegistRequestDto requestDto, Long userId) throws Exception {
@@ -85,32 +87,9 @@ public class ClothesService {
                 .build();
 
         Clothes saveClothes = clothesRepository.save(clothes);
-
-        for (String weather : requestDto.getWeatherList()) {
-            Weather weatherEntity = Weather
-                    .builder()
-                    .clothes(saveClothes)
-                    .weather(WeatherType.fromString(weather))
-                    .build();
-            weatherRepository.save(weatherEntity);
-        }
-        for (String tpo : requestDto.getTpoList()) {
-            Tpo tpoEntity = Tpo
-                    .builder()
-                    .clothes(saveClothes)
-                    .tpo(TpoType.fromString(tpo))
-                    .build();
-            tpoRepository.save(tpoEntity);
-        }
-        for (String hashtag : requestDto.getHashtagList()) {
-            Hashtag hashtagEntity = Hashtag
-                    .builder()
-                    .user(user)
-                    .clothes(clothes)
-                    .hashtag(hashtag)
-                    .build();
-            hashtagRepository.save(hashtagEntity);
-        }
+        saveWeatherList(saveClothes, requestDto.getWeatherList());
+        saveTpoList(saveClothes, requestDto.getTpoList());
+        saveHashtagList(saveClothes, requestDto.getHashtagList(), user);
 
         return new CommonResponse(200, "의류 등록 성공");
     }
@@ -129,9 +108,8 @@ public class ClothesService {
         return new DataResponse<>(200, "의류 분석 완료", responseDto);
     }
 
-    public DataResponse<Boolean> checkClothes(MultipartFile multipartFile) {
-        Boolean isClothes = true;
-        // AI서버로 전송하여 의류 여부확인
+    public DataResponse<Boolean> checkClothes(MultipartFile multipartFile) throws IOException {
+        Boolean isClothes = fastApiService.isClothes(multipartFile);
         return new DataResponse<>(200, "의류 여부 확인", isClothes);
     }
 
@@ -193,17 +171,10 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
         clothes.deleteClothes();
 
-        // closetClothesRepository.deleteAll(clothes.getClosetClothesList()); // 이건 삭제 안됨
-
-        List<ClosetClothes> closetClothesList = closetClothesRepository.findByClothes(clothes);
-        List<Hashtag> hashtagList = hashtagRepository.findByClothes(clothes);
-        List<Weather> weatherList = weatherRepository.findByClothes(clothes);
-        List<Tpo> tpoList = tpoRepository.findByClothes(clothes);
-
-        closetClothesRepository.deleteAll(closetClothesList);
-        hashtagRepository.deleteAll(hashtagList);
-        weatherRepository.deleteAll(weatherList);
-        tpoRepository.deleteAll(tpoList);
+        closetClothesRepository.deleteAll(closetClothesRepository.findByClothes(clothes));
+        hashtagRepository.deleteAll(hashtagRepository.findByClothes(clothes));
+        weatherRepository.deleteAll(weatherRepository.findByClothes(clothes));
+        tpoRepository.deleteAll(tpoRepository.findByClothes(clothes));
 
         return new CommonResponse(200, "의류 삭제 완료");
     }
@@ -222,43 +193,16 @@ public class ClothesService {
                 .orElseThrow();
         Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
                 .orElseThrow();
+
         clothes.updateClothes(originImgUrl, originImgUrl, requestDto.getDescription(), color, type, material);
 
-        List<Hashtag> hashtagList = hashtagRepository.findByClothes(clothes);
-        List<Weather> weatherList = weatherRepository.findByClothes(clothes);
-        List<Tpo> tpoList = tpoRepository.findByClothes(clothes);
+        hashtagRepository.deleteAll(hashtagRepository.findByClothes(clothes));
+        weatherRepository.deleteAll(weatherRepository.findByClothes(clothes));
+        tpoRepository.deleteAll(tpoRepository.findByClothes(clothes));
 
-        hashtagRepository.deleteAll(hashtagList);
-        weatherRepository.deleteAll(weatherList);
-        tpoRepository.deleteAll(tpoList);
-
-        for (String weather : requestDto.getWeatherList()) {
-            Weather weatherEntity = Weather
-                    .builder()
-                    .clothes(clothes)
-                    .weather(WeatherType.fromString(weather))
-                    .build();
-            weatherRepository.save(weatherEntity);
-        }
-
-        for (String tpo : requestDto.getTpoList()) {
-            Tpo tpoEntity = Tpo
-                    .builder()
-                    .clothes(clothes)
-                    .tpo(TpoType.fromString(tpo))
-                    .build();
-            tpoRepository.save(tpoEntity);
-        }
-
-        for (String hashtag : requestDto.getHashtagList()) {
-            Hashtag hashtagEntity = Hashtag
-                    .builder()
-                    .user(user)
-                    .clothes(clothes)
-                    .hashtag(hashtag)
-                    .build();
-            hashtagRepository.save(hashtagEntity);
-        }
+        saveWeatherList(clothes, requestDto.getWeatherList());
+        saveTpoList(clothes, requestDto.getTpoList());
+        saveHashtagList(clothes, requestDto.getHashtagList(), user);
 
         return new CommonResponse(200, "의류 수정 완료");
     }
@@ -273,4 +217,37 @@ public class ClothesService {
         return new CommonResponse(200, "의류 복구 성공");
     }
 
+    public void saveWeatherList(Clothes clothes, List<String> weatherList) {
+        for (String weather : weatherList) {
+            Weather weatherEntity = Weather
+                    .builder()
+                    .clothes(clothes)
+                    .weather(WeatherType.fromString(weather))
+                    .build();
+            weatherRepository.save(weatherEntity);
+        }
+    }
+
+    public void saveTpoList(Clothes clothes, List<String> tpoList) {
+        for (String tpo : tpoList) {
+            Tpo tpoEntity = Tpo
+                    .builder()
+                    .clothes(clothes)
+                    .tpo(TpoType.fromString(tpo))
+                    .build();
+            tpoRepository.save(tpoEntity);
+        }
+    }
+
+    public void saveHashtagList(Clothes clothes, List<String> hashtagList, User user) {
+        for (String hashtag : hashtagList) {
+            Hashtag hashtagEntity = Hashtag
+                    .builder()
+                    .user(user)
+                    .clothes(clothes)
+                    .hashtag(hashtag)
+                    .build();
+            hashtagRepository.save(hashtagEntity);
+        }
+    }
 }

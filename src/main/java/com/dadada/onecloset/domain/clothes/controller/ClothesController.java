@@ -26,7 +26,7 @@ public class ClothesController {
     private final ClothesService clothesService;
 
     @PostMapping("/check")
-    public DataResponse<Boolean> checkClothes(@RequestParam("image") MultipartFile multipartFile) {
+    public DataResponse<Boolean> checkClothes(@RequestParam("image") MultipartFile multipartFile) throws IOException {
         return clothesService.checkClothes(multipartFile);
     }
 
