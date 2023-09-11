@@ -49,7 +49,7 @@ public class ClosetClothesService {
         User user = getUser(userId);
         Closet closet = closetRepository.findByIdAndUser(requestDto.getClosetId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOSET_NOT_FOUND));
-        Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue( requestDto.getClothesId(), user)
+        Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
         ClosetClothes closetClothes = closetClothesRepository.findByClosetAndClothes(closet, clothes)
                 .orElseThrow();

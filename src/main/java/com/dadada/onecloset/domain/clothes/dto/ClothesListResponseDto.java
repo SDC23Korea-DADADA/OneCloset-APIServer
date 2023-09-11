@@ -4,7 +4,6 @@ import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.entity.Hashtag;
 import com.dadada.onecloset.domain.clothes.entity.Tpo;
 import com.dadada.onecloset.domain.clothes.entity.Weather;
-import com.dadada.onecloset.domain.clothes.entity.type.WeatherType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

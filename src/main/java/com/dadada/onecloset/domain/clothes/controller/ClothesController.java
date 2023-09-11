@@ -1,6 +1,7 @@
 package com.dadada.onecloset.domain.clothes.controller;
 
 import com.dadada.onecloset.domain.clothes.dto.ClothesAnalyzeResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.ClothesDetailResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.ClothesListResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.ClothesRegistRequestDto;
 import com.dadada.onecloset.domain.clothes.service.ClothesService;
@@ -57,6 +58,12 @@ public class ClothesController {
     public DataResponse<List<ClothesListResponseDto>> getClothesListInCustomCloset(HttpServletRequest request, @PathVariable("id") Long closetId) {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
         return clothesService.getClothesListInCustomCloset(closetId, userId);
+    }
+
+    @GetMapping("/{id}")
+    public DataResponse<ClothesDetailResponseDto> getClothesDetail(HttpServletRequest request, @PathVariable("id") Long clothesId) {
+        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+        return clothesService.getClothesDetail(clothesId, userId);
     }
 
 //    @PostMapping("/check")

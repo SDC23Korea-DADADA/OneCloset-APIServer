@@ -4,10 +4,7 @@ import com.dadada.onecloset.domain.closet.entity.Closet;
 import com.dadada.onecloset.domain.closet.entity.ClosetClothes;
 import com.dadada.onecloset.domain.closet.repository.ClosetClothesRepository;
 import com.dadada.onecloset.domain.closet.repository.ClosetRepository;
-import com.dadada.onecloset.domain.clothes.dto.ClothesAnalyzeResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.ClothesListResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.ClothesRegistRequestDto;
-import com.dadada.onecloset.domain.clothes.dto.FastAPIClothesAnalyzeResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.*;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.entity.Hashtag;
 import com.dadada.onecloset.domain.clothes.entity.Tpo;
@@ -168,6 +165,19 @@ public class ClothesService {
         }
 
         return new DataResponse<>(200, "사용자 등록 옷장 조회", responseDtoList);
+    }
+
+    public DataResponse<ClothesDetailResponseDto> getClothesDetail(Long clothesId, Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(clothesId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(clothes.getMaterial(), clothes.getType())
+                .orElseThrow();
+
+        ClothesDetailResponseDto responseDto = ClothesDetailResponseDto.of(clothes, clothesCare);
+
+        return new DataResponse<>(200, "의류 상세 조회", responseDto);
     }
 
 }
