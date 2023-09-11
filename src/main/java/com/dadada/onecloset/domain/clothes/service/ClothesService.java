@@ -69,11 +69,11 @@ public class ClothesService {
         User user = userRepository.findByIdWhereStatusIsTrue(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Color color = colorRepository.findByCode(requestDto.getColor())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Type type = typeRepository.findByTypeName(requestDto.getType())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
         Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
 
         Clothes clothes = Clothes
                 .builder()
@@ -98,10 +98,14 @@ public class ClothesService {
         // AI서버로 전송하여 배경제거한 이미지, 재질, 종류, 색상 받기
         FastAPIClothesAnalyzeResponseDto fastAPIresponseDto = new FastAPIClothesAnalyzeResponseDto(multipartFile,"바지","파랑","데님");
 
-        Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor()).orElseThrow();
-        Type type = typeRepository.findByTypeName(fastAPIresponseDto.getType()).orElseThrow();
-        Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial()).orElseThrow();
-        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(material, type).orElseThrow();
+        Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
+                .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
+        Type type = typeRepository.findByTypeName(fastAPIresponseDto.getType())
+                .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
+        Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial())
+                .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
+        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(material, type)
+                .orElseThrow();
 
         ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare);
 
@@ -188,11 +192,11 @@ public class ClothesService {
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
         Color color = colorRepository.findByCode(requestDto.getColor())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Type type = typeRepository.findByTypeName(requestDto.getType())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
         Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
 
         clothes.updateClothes(originImgUrl, originImgUrl, requestDto.getDescription(), color, type, material);
 
