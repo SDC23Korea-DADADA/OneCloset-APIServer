@@ -1,9 +1,6 @@
 package com.dadada.onecloset.domain.clothes.controller;
 
-import com.dadada.onecloset.domain.clothes.dto.ClothesAnalyzeResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.ClothesDetailResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.ClothesListResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.ClothesRegistRequestDto;
+import com.dadada.onecloset.domain.clothes.dto.*;
 import com.dadada.onecloset.domain.clothes.service.ClothesService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -72,10 +69,10 @@ public class ClothesController {
         return clothesService.deleteClothes(clothesId, userId);
     }
 
-    @PutMapping("/{id}")
-    public CommonResponse updateClothes(HttpServletRequest request, @PathVariable("id") Long clothesId) {
+    @PutMapping
+    public CommonResponse updateClothes(HttpServletRequest request, @ModelAttribute ClothesUpdateRequestDto requestDto) throws IOException {
         Long userId = jwtUtil.getUserIdFromHttpHeader(request);
-        return clothesService.updateClothes(clothesId, userId);
+        return clothesService.updateClothes(requestDto, userId);
     }
 
     @PutMapping("/temp/{id}")

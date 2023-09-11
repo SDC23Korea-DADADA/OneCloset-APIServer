@@ -203,9 +203,57 @@ public class ClothesService {
         return new CommonResponse(200, "의류 삭제 완료");
     }
 
-    public CommonResponse updateClothes(Long clothesId, Long userId) {
+    @Transactional
+    public CommonResponse updateClothes(ClothesUpdateRequestDto requestDto, Long userId) throws IOException {
+        // thumnail 이미지는 아직 구현 안함
+        String originImgUrl = s3Service.upload(requestDto.getImage());
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+        Color color = colorRepository.findByCode(requestDto.getColor())
+                .orElseThrow();
+        Type type = typeRepository.findByTypeName(requestDto.getType())
+                .orElseThrow();
+        Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
+                .orElseThrow();
+        clothes.updateClothes(originImgUrl, originImgUrl, requestDto.getDescription(), color, type, material);
 
+        List<Hashtag> hashtagList = hashtagRepository.findByClothes(clothes);
+        List<Weather> weatherList = weatherRepository.findByClothes(clothes);
+        List<Tpo> tpoList = tpoRepository.findByClothes(clothes);
 
+        hashtagRepository.deleteAll(hashtagList);
+        weatherRepository.deleteAll(weatherList);
+        tpoRepository.deleteAll(tpoList);
+
+        for (String weather : requestDto.getWeatherList()) {
+            Weather weatherEntity = Weather
+                    .builder()
+                    .clothes(clothes)
+                    .weather(WeatherType.fromString(weather))
+                    .build();
+            weatherRepository.save(weatherEntity);
+        }
+
+        for (String tpo : requestDto.getTpoList()) {
+            Tpo tpoEntity = Tpo
+                    .builder()
+                    .clothes(clothes)
+                    .tpo(TpoType.fromString(tpo))
+                    .build();
+            tpoRepository.save(tpoEntity);
+        }
+
+        for (String hashtag : requestDto.getHashtagList()) {
+            Hashtag hashtagEntity = Hashtag
+                    .builder()
+                    .user(user)
+                    .clothes(clothes)
+                    .hashtag(hashtag)
+                    .build();
+            hashtagRepository.save(hashtagEntity);
+        }
 
         return new CommonResponse(200, "의류 수정 완료");
     }
