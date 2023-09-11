@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.closet.dto;
+package com.dadada.onecloset.domain.closet.dto.response;
 
 import com.dadada.onecloset.domain.closet.entity.Closet;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,10 @@
 package com.dadada.onecloset.domain.clothes.controller;
 
-import com.dadada.onecloset.domain.clothes.dto.*;
+import com.dadada.onecloset.domain.clothes.dto.request.ClothesRegistRequestDto;
+import com.dadada.onecloset.domain.clothes.dto.request.ClothesUpdateRequestDto;
+import com.dadada.onecloset.domain.clothes.dto.response.ClothesAnalyzeResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.response.ClothesDetailResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.response.ClothesListResponseDto;
 import com.dadada.onecloset.domain.clothes.service.ClothesService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;

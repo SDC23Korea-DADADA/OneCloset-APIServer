@@ -1,6 +1,6 @@
 package com.dadada.onecloset.domain.closet.service;
 
-import com.dadada.onecloset.domain.closet.dto.ClosetClothesRequestDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetClothesRequestDto;
 import com.dadada.onecloset.domain.closet.entity.Closet;
 import com.dadada.onecloset.domain.closet.entity.ClosetClothes;
 import com.dadada.onecloset.domain.closet.repository.ClosetClothesRepository;

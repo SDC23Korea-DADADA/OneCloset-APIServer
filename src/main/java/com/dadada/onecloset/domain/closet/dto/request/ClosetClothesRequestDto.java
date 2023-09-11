@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.closet.dto;
+package com.dadada.onecloset.domain.closet.dto.request;
 
 import lombok.Getter;
 

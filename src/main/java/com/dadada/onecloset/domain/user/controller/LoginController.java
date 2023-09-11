@@ -1,9 +1,8 @@
 package com.dadada.onecloset.domain.user.controller;
 
-import com.dadada.onecloset.domain.user.dto.KakaoCodeRequestDto;
+import com.dadada.onecloset.domain.user.dto.request.KakaoCodeRequestDto;
 import com.dadada.onecloset.domain.user.service.KakaoLoginService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

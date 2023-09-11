@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.clothes.dto;
+package com.dadada.onecloset.domain.clothes.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +8,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ClothesRegistRequestDto {
+public class ClothesUpdateRequestDto {
 
+    private Long clothesId;
     private MultipartFile image;
     private String type;
     private String color;

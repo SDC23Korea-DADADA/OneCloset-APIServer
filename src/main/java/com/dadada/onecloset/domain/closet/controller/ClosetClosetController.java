@@ -1,6 +1,6 @@
 package com.dadada.onecloset.domain.closet.controller;
 
-import com.dadada.onecloset.domain.closet.dto.ClosetClothesRequestDto;
+import com.dadada.onecloset.domain.closet.dto.request.ClosetClothesRequestDto;
 import com.dadada.onecloset.domain.closet.service.ClosetClothesService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.util.JwtUtil;

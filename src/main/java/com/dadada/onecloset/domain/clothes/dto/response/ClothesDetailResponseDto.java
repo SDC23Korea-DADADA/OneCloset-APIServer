@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.clothes.dto;
+package com.dadada.onecloset.domain.clothes.dto.response;
 
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.entity.Hashtag;
