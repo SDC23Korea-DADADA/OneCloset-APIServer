@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 public class ClothesAnalyzeResponseDto {
 
-    private byte[] image;
+    private String image;
 
     private String color;
     private String colorCode;
@@ -34,7 +34,7 @@ public class ClothesAnalyzeResponseDto {
     private List<String> laundryTip;
     private List<String> careTip;
 
-    public static ClothesAnalyzeResponseDto of(FastAPIClothesAnalyzeResponseDto responseDto, Color color, ClothesCare clothesCare) throws IOException {
+    public static ClothesAnalyzeResponseDto of(FastApiClothesAnalyzeResponseDto responseDto, Color color, ClothesCare clothesCare) throws IOException {
 
         List<String> laundryTip = new ArrayList<>();
         for (LaundryTip laundry : clothesCare.getLaundryTipList()) {
@@ -48,7 +48,7 @@ public class ClothesAnalyzeResponseDto {
 
         return ClothesAnalyzeResponseDto
                 .builder()
-                .image(responseDto.getMultipartFile().getBytes())
+                .image(responseDto.getUrl())
                 .color(color.getColorName())
                 .colorCode(color.getCode())
                 .type(responseDto.getType())

@@ -9,7 +9,7 @@ import com.dadada.onecloset.domain.clothes.dto.request.ClothesUpdateRequestDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesDetailResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesListResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.response.FastAPIClothesAnalyzeResponseDto;
+import com.dadada.onecloset.domain.clothes.dto.response.FastApiClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.entity.Hashtag;
 import com.dadada.onecloset.domain.clothes.entity.Tpo;
@@ -95,8 +95,7 @@ public class ClothesService {
     }
 
     public DataResponse<ClothesAnalyzeResponseDto> analyzeClothes(MultipartFile multipartFile) throws IOException {
-        // AI서버로 전송하여 배경제거한 이미지, 재질, 종류, 색상 받기
-        FastAPIClothesAnalyzeResponseDto fastAPIresponseDto = new FastAPIClothesAnalyzeResponseDto(multipartFile,"바지","파랑","데님");
+        FastApiClothesAnalyzeResponseDto fastAPIresponseDto = fastApiService.getClothesInfoAndRemoveBackgroundImg(multipartFile);
 
         Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
