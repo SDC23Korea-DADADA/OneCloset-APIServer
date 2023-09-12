@@ -1,5 +1,6 @@
 package com.dadada.onecloset.global;
 
+import com.dadada.onecloset.domain.clothes.dto.response.FastApiClothesAnalyzeResponseDto;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,25 @@ public class FastApiService {
     private String AI_SERVER;
 
     public Boolean isClothes(MultipartFile file) throws IOException {
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
+        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/check", HttpMethod.POST, requestEntity, String.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
+            return Boolean.parseBoolean(jsonElement.getAsJsonObject().get("isClothes").getAsString());
+        }
+        return false;
+    }
+
+    public FastApiClothesAnalyzeResponseDto getClothesInfoAndRemoveBackgroundImg(MultipartFile file) throws IOException {
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
+        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/rembg/info", HttpMethod.POST, requestEntity, String.class);
+        JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
+        return FastApiClothesAnalyzeResponseDto.of(jsonElement);
+    }
+
+
+    public HttpEntity<MultiValueMap<String, Object>> makeHttpEntity(MultipartFile file) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -36,15 +56,8 @@ public class FastApiService {
             }
         });
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "check", HttpMethod.POST, requestEntity, String.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            JsonElement element = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
-            return Boolean.parseBoolean(element.getAsJsonObject().get("isClothes").getAsString());
-        }
-        return false;
+        return new HttpEntity<>(body, headers);
     }
+
 
 }
