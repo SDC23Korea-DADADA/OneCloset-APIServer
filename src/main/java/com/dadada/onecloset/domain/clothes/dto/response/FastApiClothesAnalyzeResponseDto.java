@@ -17,7 +17,7 @@ public class FastApiClothesAnalyzeResponseDto {
     public static FastApiClothesAnalyzeResponseDto of(JsonElement jsonElement) {
         return FastApiClothesAnalyzeResponseDto
                 .builder()
-                .url(jsonElement.getAsJsonObject().get("url").getAsString())
+                .url(jsonElement.getAsJsonObject().get("image").getAsString())
                 .type(jsonElement.getAsJsonObject().get("type").getAsString())
                 .color(jsonElement.getAsJsonObject().get("color").getAsString())
                 .material(jsonElement.getAsJsonObject().get("material").getAsString())
