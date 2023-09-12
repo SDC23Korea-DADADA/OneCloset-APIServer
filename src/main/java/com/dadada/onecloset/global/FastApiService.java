@@ -43,6 +43,13 @@ public class FastApiService {
         return FastApiClothesAnalyzeResponseDto.of(jsonElement);
     }
 
+    public String removeBackgroundImg(MultipartFile file) throws IOException {
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
+        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/rembg", HttpMethod.POST, requestEntity, String.class);
+        JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
+        return jsonElement.getAsJsonObject().get("url").getAsString();
+    }
+
 
     public HttpEntity<MultiValueMap<String, Object>> makeHttpEntity(MultipartFile file) throws IOException {
         HttpHeaders headers = new HttpHeaders();
