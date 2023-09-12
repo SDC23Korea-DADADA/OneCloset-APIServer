@@ -20,6 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -42,9 +43,16 @@ public class KakaoLoginService {
     private String SECRET;
 
     public ResponseEntity<?> kakaoLogin(KakaoCodeRequestDto requestDto){
-        String access_token = getAccessToken(requestDto);
-        HashMap<String, Object> userInfo = getUserInfo(access_token);
+        HashMap<String, Object> userInfo = getUserInfo(getAccessToken(requestDto));
         HashMap<String, Object> jwt = getJWT(userInfo);
+        if (jwt == null) {
+            return new ResponseEntity<>("탈퇴한 회원 입니다.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> kakaoLoginByAccessToken(String accessToken) {
+        HashMap<String, Object> jwt = getJWT(getUserInfo(accessToken));
         if (jwt == null) {
             return new ResponseEntity<>("탈퇴한 회원 입니다.", HttpStatus.BAD_REQUEST);
         }
@@ -92,20 +100,8 @@ public class KakaoLoginService {
 
 
     public String getAccessToken(KakaoCodeRequestDto requestDto) {
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        // Body
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", CLIENT);
-        body.add("client_secret", SECRET);
-        body.add("redirect_uri", requestDto.getRedirect());
-        body.add("code", requestDto.getCode());
-
-        // HTTP Request
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = getMultiValueMapHttpEntity(requestDto);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
                 "https://kauth.kakao.com/oauth/token",
@@ -126,26 +122,29 @@ public class KakaoLoginService {
         return jsonNode.get("access_token").asText();
     }
 
+    private HttpEntity<MultiValueMap<String, String>> getMultiValueMapHttpEntity(KakaoCodeRequestDto requestDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // Body
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", CLIENT);
+        body.add("client_secret", SECRET);
+        body.add("redirect_uri", requestDto.getRedirect());
+        body.add("code", requestDto.getCode());
+
+        // HTTP Request
+        return new HttpEntity<>(body, headers);
+    }
+
     public HashMap<String, Object> getUserInfo(String accessToken) {
 
         HashMap<String, Object> userInfo = new HashMap<>();
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
 
         try {
-            URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-
-            // read response message
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            StringBuilder result = new StringBuilder();
-            while((line = br.readLine())!=null) {
-                result.append(line);
-            }
+            StringBuilder result = getStringBuilder(accessToken, reqUrl);
 
             JsonElement element = JsonParser.parseString(result.toString());
             String loginId = element.getAsJsonObject().get("id").getAsString();
@@ -170,6 +169,24 @@ public class KakaoLoginService {
         }
 
         return userInfo;
+    }
+
+    private static StringBuilder getStringBuilder(String accessToken, String reqUrl) throws IOException {
+        URL url = new URL(reqUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+        // read response message
+        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String line;
+        StringBuilder result = new StringBuilder();
+        while((line = br.readLine())!=null) {
+            result.append(line);
+        }
+        return result;
     }
 
 }

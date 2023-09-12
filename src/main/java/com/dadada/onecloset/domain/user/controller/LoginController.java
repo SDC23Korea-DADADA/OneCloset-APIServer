@@ -19,14 +19,9 @@ public class LoginController {
         return kakaoLoginService.kakaoLogin(requestDto);
     }
 
-//    @GetMapping("/naver/{code}")
-//    public ResponseEntity<?> naverLogin(@PathVariable("code") String code) {
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/google/{code}")
-//    public ResponseEntity<?> googleLogin(@PathVariable("code") String code) {
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @PostMapping("/kakao/access/{token}")
+    public ResponseEntity<?> kakaoLogin(@PathVariable("token") String accessToken) {
+        return kakaoLoginService.kakaoLoginByAccessToken(accessToken);
+    }
 
 }
