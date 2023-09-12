@@ -1,7 +1,7 @@
 package com.dadada.onecloset.domain.user.service;
 
 
-import com.dadada.onecloset.domain.user.dto.UserInfoResponseDto;
+import com.dadada.onecloset.domain.user.dto.response.UserInfoResponseDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

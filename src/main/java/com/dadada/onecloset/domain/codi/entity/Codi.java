@@ -27,7 +27,7 @@ public class Codi {
 
     private LocalDateTime wearingAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

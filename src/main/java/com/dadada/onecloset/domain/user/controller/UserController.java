@@ -1,6 +1,6 @@
 package com.dadada.onecloset.domain.user.controller;
 
-import com.dadada.onecloset.domain.user.dto.UserInfoResponseDto;
+import com.dadada.onecloset.domain.user.dto.response.UserInfoResponseDto;
 import com.dadada.onecloset.domain.user.service.UserService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;

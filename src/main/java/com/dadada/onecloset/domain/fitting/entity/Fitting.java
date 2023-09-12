@@ -27,11 +27,11 @@ public class Fitting {
 
     private LocalDateTime wearingAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mannequin_code")
     private Mannequin mannequin;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

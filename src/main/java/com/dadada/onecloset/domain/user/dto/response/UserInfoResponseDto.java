@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.user.dto;
+package com.dadada.onecloset.domain.user.dto.response;
 
 import com.dadada.onecloset.domain.user.entity.User;
 import lombok.Getter;
