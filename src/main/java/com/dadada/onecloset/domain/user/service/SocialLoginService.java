@@ -39,23 +39,41 @@ public class SocialLoginService {
 
     private final JwtUtil jwtUtil;
 
-    @Value("${KAKAO_CLIENT}")
+    @Value("${social-login.kakao.client}")
     private String KAKAO_CLIENT;
 
-    @Value("${KAKAO_SECRET}")
+    @Value("${social-login.kakao.secret}")
     private String KAKAO_SECRET;
 
-    @Value("${NAVER_CLIENT}")
+    @Value("${social-login.kakao.auth-uri}")
+    private String KAKAO_AUTH_URI;
+
+    @Value("${social-login.kakao.user-info-uri}")
+    private String KAKAO_USER_INFO_URI;
+
+    @Value("${social-login.naver.client}")
     private String NAVER_CLIENT;
 
-    @Value("${NAVER_SECRET}")
+    @Value("${social-login.naver.secret}")
     private String NAVER_SECRET;
 
-    @Value("${GOOGLE_CLIENT}")
+    @Value("${social-login.naver.auth-uri}")
+    private String NAVER_AUTH_URI;
+
+    @Value("${social-login.naver.user-info-uri}")
+    private String NAVER_USER_INFO_URI;
+
+    @Value("${social-login.google.client}")
     private String GOOGLE_CLIENT;
 
-    @Value("${GOOGLE_SECRET}")
+    @Value("${social-login.google.secret}")
     private String GOOGLE_SECRET;
+
+    @Value("${social-login.google.auth-uri}")
+    private String GOOGLE_AUTH_URI;
+
+    @Value("${social-login.google.user-info-uri}")
+    private String GOOGLE_USER_INFO_URI;
 
 
     public DataResponse<HashMap<String, Object>> kakaoLogin(CodeAndUriRequestDto requestDto) throws IOException {
@@ -97,7 +115,7 @@ public class SocialLoginService {
     public String getAccessTokenByKakao(CodeAndUriRequestDto requestDto) throws JsonProcessingException {
         HttpEntity<MultiValueMap<String, String>> tokenRequest = getHttpEntityByKakao(requestDto);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, tokenRequest, String.class);
+        ResponseEntity<String> response = rt.exchange(KAKAO_AUTH_URI, HttpMethod.POST, tokenRequest, String.class);
 
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -123,7 +141,7 @@ public class SocialLoginService {
     public String getAccessTokenByNaver(CodeAndUriRequestDto requestDto) throws JsonProcessingException {
         HttpEntity<MultiValueMap<String, String>> tokenRequest = getHttpEntityByNaver(requestDto);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.POST, tokenRequest, String.class);
+        ResponseEntity<String> response = rt.exchange(NAVER_AUTH_URI, HttpMethod.POST, tokenRequest, String.class);
 
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -149,7 +167,7 @@ public class SocialLoginService {
     public String getAccessTokenByGoogle(CodeAndUriRequestDto requestDto) throws JsonProcessingException {
         HttpEntity<MultiValueMap<String, String>> tokenRequest = getHttpEntityByGoogle(requestDto);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.exchange("https://oauth2.googleapis.com/token", HttpMethod.POST, tokenRequest, String.class);
+        ResponseEntity<String> response = rt.exchange(GOOGLE_AUTH_URI, HttpMethod.POST, tokenRequest, String.class);
 
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -175,9 +193,8 @@ public class SocialLoginService {
     public HashMap<String, Object> getUserInfoByKakao(String accessToken) throws IOException {
 
         HashMap<String, Object> userInfo = new HashMap<>();
-        String reqUrl = "https://kapi.kakao.com/v2/user/me";
 
-        StringBuilder result = getStringBuilder(accessToken, reqUrl);
+        StringBuilder result = getStringBuilder(accessToken, KAKAO_USER_INFO_URI);
         JsonElement element = JsonParser.parseString(result.toString());
 
         String email = "";
@@ -197,8 +214,7 @@ public class SocialLoginService {
     public HashMap<String, Object> getUserInfoByNaver(String accessToken) throws IOException {
         HashMap<String, Object> userInfo = new HashMap<>();
 
-        String reqUrl = "https://openapi.naver.com/v1/nid/me";
-        StringBuilder result = getStringBuilder(accessToken, reqUrl);
+        StringBuilder result = getStringBuilder(accessToken, NAVER_USER_INFO_URI);
         JsonElement element = JsonParser.parseString(result.toString());
 
         userInfo.put("loginId", element.getAsJsonObject().get("response").getAsJsonObject().get("id").getAsString());
@@ -211,8 +227,7 @@ public class SocialLoginService {
     public HashMap<String, Object> getUserInfoByGoogle(String accessToken) throws IOException {
         HashMap<String, Object> userInfo = new HashMap<>();
 
-        String reqUrl = "https://www.googleapis.com/userinfo/v2/me";
-        StringBuilder result = getStringBuilder(accessToken, reqUrl);
+        StringBuilder result = getStringBuilder(accessToken, GOOGLE_USER_INFO_URI);
         JsonElement element = JsonParser.parseString(result.toString());
 
         userInfo.put("loginId", element.getAsJsonObject().get("id").getAsString());
