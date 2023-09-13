@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -18,14 +20,14 @@ public class ClosetClosetController {
     private final JwtUtil jwtUtil;
 
     @PostMapping
-    public CommonResponse registClothesToCloset(HttpServletRequest request, @RequestBody ClosetClothesRequestDto requestDto){
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse registClothesToCloset(Principal principal, @RequestBody ClosetClothesRequestDto requestDto){
+        Long userId = Long.parseLong(principal.getName());
         return closetClothesService.registClothesToCloset(requestDto, userId);
     }
 
     @DeleteMapping
-    public CommonResponse deleteClothesFromCloset(HttpServletRequest request, @RequestBody ClosetClothesRequestDto requestDto){
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse deleteClothesFromCloset(Principal principal, @RequestBody ClosetClothesRequestDto requestDto){
+        Long userId = Long.parseLong(principal.getName());
         return closetClothesService.deleteClothesToCloset(requestDto, userId);
     }
 

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,30 +20,29 @@ import java.util.List;
 public class ClosetController {
 
     private final ClosetService closetService;
-    private final JwtUtil jwtUtil;
 
     @PostMapping
-    public CommonResponse createCloset(HttpServletRequest request, @RequestBody ClosetCreateRequestDto requestDto) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse createCloset(Principal principal, @RequestBody ClosetCreateRequestDto requestDto) {
+        Long userId = Long.parseLong(principal.getName());
         System.out.println(requestDto);
         return closetService.createCloset(requestDto, userId);
     }
 
     @GetMapping("/list")
-    public DataResponse<List<ClosetListResponseDto>> getClosetList(HttpServletRequest request){
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public DataResponse<List<ClosetListResponseDto>> getClosetList(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
         return closetService.getClosetList(userId);
     }
 
     @PutMapping
-    public CommonResponse editClosetInfo(HttpServletRequest request, @RequestBody ClosetEditRequestDto requestDto) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse editClosetInfo(Principal principal, @RequestBody ClosetEditRequestDto requestDto) {
+        Long userId = Long.parseLong(principal.getName());
         return closetService.editClosetInfo(requestDto, userId);
     }
 
     @DeleteMapping("/{id}")
-    public CommonResponse deleteCloset(HttpServletRequest request, @PathVariable("id") Long closetId) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse deleteCloset(Principal principal, @PathVariable("id") Long closetId) {
+        Long userId = Long.parseLong(principal.getName());
         return closetService.deleteCloset(closetId, userId);
     }
 

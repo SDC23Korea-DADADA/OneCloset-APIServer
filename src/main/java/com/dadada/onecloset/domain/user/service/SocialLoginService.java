@@ -37,8 +37,6 @@ public class SocialLoginService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    private final JwtUtil jwtUtil;
-
     @Value("${social-login.kakao.client}")
     private String KAKAO_CLIENT;
 
@@ -205,7 +203,7 @@ public class SocialLoginService {
 
         userInfo.put("loginId", element.getAsJsonObject().get("id").getAsString());
         userInfo.put("nickname", element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString());
-        userInfo.put("profileImg",element.getAsJsonObject().get("properties").getAsJsonObject().get("profile_image").getAsString());
+        userInfo.put("profileImg", element.getAsJsonObject().get("properties").getAsJsonObject().get("profile_image").getAsString());
         userInfo.put("email", email);
 
         return userInfo;
@@ -249,7 +247,7 @@ public class SocialLoginService {
         BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
         StringBuilder result = new StringBuilder();
-        while((line = br.readLine())!=null) {
+        while ((line = br.readLine()) != null) {
             result.append(line);
         }
         return result;
@@ -265,8 +263,12 @@ public class SocialLoginService {
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
 
         HashMap<String, Object> result = new HashMap<>();
-        String jwt = jwtUtil.createToken(user.getId().toString());
-        result.put("access-token", jwt);
+
+        String accessToken = JwtUtil.generateAccessToken(user.getId().toString());
+        String refreshToken = JwtUtil.generateRefreshToken(user.getId().toString());
+        result.put("access-token", accessToken);
+        result.put("refresh-token", refreshToken);
+
         return result;
     }
 }

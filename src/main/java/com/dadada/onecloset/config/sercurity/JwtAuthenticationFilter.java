@@ -1,5 +1,6 @@
 package com.dadada.onecloset.config.sercurity;
 
+import com.dadada.onecloset.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authorizationToken != null && authorizationToken.startsWith("Bearer ")) {
             String token = authorizationToken.substring(7);
 
-            String userId = JwtStaticUtil.getPayloadAndCheckExpired(token).get("user_id", String.class);
+            String userId = JwtUtil.getPayloadAndCheckExpired(token).get("userId", String.class);
 
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(userId, null, null);
