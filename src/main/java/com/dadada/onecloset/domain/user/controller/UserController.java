@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
@@ -20,8 +22,8 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @GetMapping
-    public DataResponse<UserInfoResponseDto> getUserInfo(HttpServletRequest request) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public DataResponse<UserInfoResponseDto> getUserInfo(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
         UserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return new DataResponse<>(200, "유저 정보 조회 성공", responseDto);
     }
@@ -32,8 +34,8 @@ public class UserController {
     }
 
     @PostMapping("/leave")
-    public CommonResponse leaveService(HttpServletRequest request) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse leaveService(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
         userService.leaveService(userId);
         return new CommonResponse(200, "탈퇴 성공");
     }

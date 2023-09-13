@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,7 +23,6 @@ import java.util.List;
 @RequestMapping("/api/clothes")
 public class ClothesController {
 
-    private final JwtUtil jwtUtil;
     private final ClothesService clothesService;
 
     @PostMapping("/check")
@@ -36,52 +36,52 @@ public class ClothesController {
     }
 
     @PostMapping
-    public CommonResponse registClothes(HttpServletRequest request, @ModelAttribute ClothesRegistRequestDto requestDto) throws Exception {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse registClothes(Principal principal, @ModelAttribute ClothesRegistRequestDto requestDto) throws Exception {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.registClothes(requestDto, userId);
     }
 
     @GetMapping("/hashtag")
-    public DataResponse<List<String>> getHashtagList(HttpServletRequest request) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public DataResponse<List<String>> getHashtagList(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.getHashtagList(userId);
     }
 
     // 페이징처리 추가하기
     @GetMapping("/list")
-    public DataResponse<List<ClothesListResponseDto>> getClothesListInDefaultCloset(HttpServletRequest request) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public DataResponse<List<ClothesListResponseDto>> getClothesListInDefaultCloset(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.getClothesListInDefaultCloset(userId);
     }
 
     // 페이징처리 추가하기
     @GetMapping("/list/{id}")
-    public DataResponse<List<ClothesListResponseDto>> getClothesListInCustomCloset(HttpServletRequest request, @PathVariable("id") Long closetId) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public DataResponse<List<ClothesListResponseDto>> getClothesListInCustomCloset(Principal principal, @PathVariable("id") Long closetId) {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.getClothesListInCustomCloset(closetId, userId);
     }
 
     @GetMapping("/{id}")
-    public DataResponse<ClothesDetailResponseDto> getClothesDetail(HttpServletRequest request, @PathVariable("id") Long clothesId) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public DataResponse<ClothesDetailResponseDto> getClothesDetail(Principal principal, @PathVariable("id") Long clothesId) {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.getClothesDetail(clothesId, userId);
     }
 
     @DeleteMapping("/{id}")
-    public CommonResponse deleteClothes(HttpServletRequest request, @PathVariable("id") Long clothesId) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse deleteClothes(Principal principal, @PathVariable("id") Long clothesId) {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.deleteClothes(clothesId, userId);
     }
 
     @PutMapping
-    public CommonResponse updateClothes(HttpServletRequest request, @ModelAttribute ClothesUpdateRequestDto requestDto) throws IOException {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse updateClothes(Principal principal, @ModelAttribute ClothesUpdateRequestDto requestDto) throws IOException {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.updateClothes(requestDto, userId);
     }
 
     @PutMapping("/temp/{id}")
-    public CommonResponse restoreClothes(HttpServletRequest request, @PathVariable("id") Long clothesId) {
-        Long userId = jwtUtil.getUserIdFromHttpHeader(request);
+    public CommonResponse restoreClothes(Principal principal, @PathVariable("id") Long clothesId) {
+        Long userId = Long.parseLong(principal.getName());
         return clothesService.restoreClothes(clothesId, userId);
     }
 }

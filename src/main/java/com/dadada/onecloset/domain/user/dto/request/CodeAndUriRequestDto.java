@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class KakaoCodeRequestDto {
+public class CodeAndUriRequestDto {
 
     private String code;
     private String redirect;
