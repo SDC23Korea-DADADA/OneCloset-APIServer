@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CorsFilter;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -47,7 +46,11 @@ public class SecurityConfig {
         // api 권한 제어 (추후 조절 필요)
         http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/api/authenticate", "/api/signup", "/**").permitAll()
+                        .requestMatchers(
+                                "/api/login/**",
+                                "/api/resize",
+                                "/api/user/temp/rejoin/**",
+                                "/").permitAll()
                         .anyRequest().authenticated()
                 );
 

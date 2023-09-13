@@ -12,6 +12,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByLoginIdAndLoginType(String loginId, LoginType loginType);
 
+    @Query("SELECT user FROM User user where user.loginId=:loginId AND user.loginType=:loginType AND user.status = true")
+    Optional<User> findByLoginIdAndLoginTypeWhereStatusIsTrue(
+            @Param("loginId")String loginId, @Param("loginType")LoginType loginType
+    );
+
     @Query("SELECT user FROM User user where user.id=:userId AND user.status = true")
     Optional<User> findByIdWhereStatusIsTrue(@Param("userId") Long userId);
 
