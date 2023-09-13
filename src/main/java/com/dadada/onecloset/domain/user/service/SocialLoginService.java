@@ -259,7 +259,7 @@ public class SocialLoginService {
             userService.enterUser(userInfo, loginType);
         }
 
-        User user = userRepository.findByLoginIdAndLoginType(userInfo.get("loginId").toString(), loginType)
+        User user = userRepository.findByLoginIdAndLoginTypeWhereStatusIsTrue(userInfo.get("loginId").toString(), loginType)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
 
         HashMap<String, Object> result = new HashMap<>();
