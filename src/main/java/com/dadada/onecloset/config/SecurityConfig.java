@@ -1,5 +1,7 @@
 package com.dadada.onecloset.config;
 
+import com.dadada.onecloset.config.sercurity.CustomAccessDeniedHandler;
+import com.dadada.onecloset.config.sercurity.CustomAuthenticationEntryPoint;
 import com.dadada.onecloset.config.sercurity.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +23,8 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CorsFilter corsFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,19 +36,31 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
 
-                // 세션 사용 안함
+        // 세션 사용 안함
+        http
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
-                // api 권한 제어 (추후 조절 필요)
+        // api 권한 제어 (추후 조절 필요)
+        http
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/api/authenticate", "/api/signup", "/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                );
 
-                // 커스텀 필터 등록
+        // 커스텀 필터 등록
+        http
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        // 인증, 인가 예외처리 핸들러 등록
+        http
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)   // 인증 실패
+                        .accessDeniedHandler(customAccessDeniedHandler)             // 인가 실패
+                );
 
         return http.build();
     }

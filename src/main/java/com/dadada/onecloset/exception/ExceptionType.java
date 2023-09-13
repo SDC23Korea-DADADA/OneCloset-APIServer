@@ -15,6 +15,7 @@ public enum ExceptionType {
     USER_NOT_FOUND(4000, "존재하지 않는 유저입니다."),
     JWT_TOKEN_EXPIRED(4001, "토큰이 만료되었습니다."),
     JWT_TOKEN_PARSE_ERROR(4002, "JWT 토큰 파싱에 실패하였습니다."),
+    AUTHENTICATION_FAILED(4003, "유저 인증에 실패하였습니다."),
 
     CLOSET_NOT_FOUND(4001, "존재하지 않는 옷장입니다."),
     CLOTHES_NOT_FOUND(4002, "존재하지 않는 의류입니다."),
