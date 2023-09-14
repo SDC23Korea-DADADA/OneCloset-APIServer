@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,8 +35,19 @@ public class EntityController {
     }
 
     @GetMapping("/color")
-    public List<Color> getColorList() {
-        return colorRepository.findAll();
+    public List<ColorCheckResponseDto> getColorList() {
+        List<ColorCheckResponseDto> list = new ArrayList<>();
+        List<Color> colorList = colorRepository.findAll();
+        for (Color color: colorList) {
+            ColorCheckResponseDto responseDto = ColorCheckResponseDto
+                    .builder()
+                    .colorName(color.getColorName())
+                    .colorCode(color.getCode())
+                    .colorLong(Long.decode(color.getCode()))
+                    .build();
+            list.add(responseDto);
+        }
+        return list;
     }
 
 
