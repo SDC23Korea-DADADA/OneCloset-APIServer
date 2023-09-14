@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ClothesSolutionRepository extends JpaRepository<ClothesCare, Long> {
 
-    Optional<ClothesCare> findByMaterialCodeAndTypeCode(Material material, Type type);
+    Optional<ClothesCare> findByMaterialCode(Material material);
 
 }

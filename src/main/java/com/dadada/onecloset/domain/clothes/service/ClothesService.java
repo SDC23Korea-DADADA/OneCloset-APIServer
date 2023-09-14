@@ -99,11 +99,9 @@ public class ClothesService {
 
         Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
-        Type type = typeRepository.findByTypeName(fastAPIresponseDto.getType())
-                .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
         Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial())
                 .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
-        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(material, type)
+        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(material)
                 .orElseThrow();
 
         ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare);
@@ -158,7 +156,7 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(clothesId, user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
-        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCodeAndTypeCode(clothes.getMaterial(), clothes.getType())
+        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(clothes.getMaterial())
                 .orElseThrow();
 
         ClothesDetailResponseDto responseDto = ClothesDetailResponseDto.of(clothes, clothesCare);
