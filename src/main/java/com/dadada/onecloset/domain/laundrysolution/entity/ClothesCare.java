@@ -20,9 +20,9 @@ public class ClothesCare {
     @JoinColumn(name = "material_code")
     private Material materialCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "type_code")
-    private Type typeCode;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "type_code")
+//    private Type typeCode;
 
     private String laundryCourse;
 
