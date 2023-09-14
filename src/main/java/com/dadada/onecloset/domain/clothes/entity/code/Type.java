@@ -12,7 +12,7 @@ public class Type {
     @Column(name = "type_code")
     private Long code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "upper_type_code")
     private UpperType upperTypeCode;
 

@@ -52,6 +52,7 @@ public class SecurityConfig {
                                 "/api/user/temp/rejoin/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
+                                "/api/entity/**",
                                 "/").permitAll()
                         .anyRequest().authenticated()
                 );
