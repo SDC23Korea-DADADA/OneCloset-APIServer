@@ -266,8 +266,8 @@ public class SocialLoginService {
 
         String accessToken = JwtUtil.generateAccessToken(user.getId().toString());
         String refreshToken = JwtUtil.generateRefreshToken(user.getId().toString());
-        result.put("access-token", accessToken);
-        result.put("refresh-token", refreshToken);
+        result.put("accessToken", accessToken);
+        result.put("refreshToken", refreshToken);
 
         return result;
     }
