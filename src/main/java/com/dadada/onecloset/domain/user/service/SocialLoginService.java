@@ -1,5 +1,8 @@
 package com.dadada.onecloset.domain.user.service;
 
+import com.dadada.onecloset.domain.closet.entity.Closet;
+import com.dadada.onecloset.domain.closet.repository.ClosetRepository;
+import com.dadada.onecloset.domain.closet.service.ClosetService;
 import com.dadada.onecloset.domain.user.dto.request.CodeAndUriRequestDto;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.entity.type.LoginType;
@@ -36,6 +39,7 @@ public class SocialLoginService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final ClosetRepository closetRepository;
 
     @Value("${social-login.kakao.client}")
     private String KAKAO_CLIENT;
@@ -256,7 +260,16 @@ public class SocialLoginService {
     private HashMap<String, Object> getJWT(HashMap<String, Object> userInfo, LoginType loginType) {
 
         if (userService.isEmpty(userInfo.get("loginId").toString(), loginType)) {
-            userService.enterUser(userInfo, loginType);
+            User user = userService.enterUser(userInfo, loginType);
+            // 회원가입 후 기본 옷장 생성
+            Closet closet = Closet
+                    .builder()
+                    .user(user)
+                    .name("My 옷장")
+                    .icon(1)
+                    .colorCode("#FF191919")
+                    .build();
+            closetRepository.save(closet);
         }
 
         User user = userRepository.findByLoginIdAndLoginTypeWhereStatusIsTrue(userInfo.get("loginId").toString(), loginType)
@@ -271,4 +284,6 @@ public class SocialLoginService {
 
         return result;
     }
+
+
 }

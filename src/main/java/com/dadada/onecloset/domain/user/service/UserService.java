@@ -40,7 +40,7 @@ public class UserService {
     }
 
     @Transactional
-    public void enterUser(HashMap<String, Object> userInfo, LoginType loginType) {
+    public User enterUser(HashMap<String, Object> userInfo, LoginType loginType) {
         User user = User
                 .builder()
                 .loginId(userInfo.get("loginId").toString())
@@ -49,7 +49,7 @@ public class UserService {
                 .profileImg(userInfo.get("profileImg").toString())
                 .email(userInfo.get("email").toString())
                 .build();
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     boolean isEmpty(String loginId, LoginType loginType) {
