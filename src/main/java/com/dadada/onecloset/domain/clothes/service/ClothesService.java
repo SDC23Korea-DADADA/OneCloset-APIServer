@@ -91,7 +91,7 @@ public class ClothesService {
         saveTpoList(saveClothes, requestDto.getTpoList());
         saveHashtagList(saveClothes, requestDto.getHashtagList(), user);
 
-        Closet closet = closetRepository.findById(requestDto.getClosetId())
+        Closet closet = closetRepository.findByIdAndUser(requestDto.getClosetId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOSET_NOT_FOUND));
 
         ClosetClothes closetClothes = ClosetClothes
