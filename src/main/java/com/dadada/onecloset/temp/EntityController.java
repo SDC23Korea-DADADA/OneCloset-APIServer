@@ -1,4 +1,4 @@
-package com.dadada.onecloset.global;
+package com.dadada.onecloset.temp;
 
 import com.dadada.onecloset.domain.clothes.entity.code.Color;
 import com.dadada.onecloset.domain.clothes.entity.code.Material;

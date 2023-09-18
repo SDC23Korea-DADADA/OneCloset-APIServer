@@ -1,5 +1,6 @@
-package com.dadada.onecloset.global;
+package com.dadada.onecloset.temp;
 
+import com.dadada.onecloset.global.S3Service;
 import lombok.RequiredArgsConstructor;
 import marvin.image.MarvinImage;
 import org.marvinproject.image.transform.scale.Scale;

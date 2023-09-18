@@ -12,7 +12,9 @@ import com.dadada.onecloset.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -22,6 +24,12 @@ import java.util.List;
 public class FittingController {
 
     private final FittingService fittingService;
+
+    @PostMapping("/model")
+    public CommonResponse registFittingModel(Principal principal, @RequestParam("image") MultipartFile multipartFile) throws IOException {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.registFittingModel(multipartFile, userId);
+    }
 
     @PostMapping
     public DataResponse<FittingResultResponseDto> fitting(Principal principal, @ModelAttribute FittingRequestDto requestDto) {
