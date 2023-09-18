@@ -91,6 +91,16 @@ public class ClothesService {
         saveTpoList(saveClothes, requestDto.getTpoList());
         saveHashtagList(saveClothes, requestDto.getHashtagList(), user);
 
+        Closet closet = closetRepository.findById(requestDto.getClosetId())
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOSET_NOT_FOUND));
+
+        ClosetClothes closetClothes = ClosetClothes
+                .builder()
+                .closet(closet)
+                .clothes(clothes)
+                .build();
+        closetClothesRepository.save(closetClothes);
+
         return new CommonResponse(200, "의류 등록 성공");
     }
 
