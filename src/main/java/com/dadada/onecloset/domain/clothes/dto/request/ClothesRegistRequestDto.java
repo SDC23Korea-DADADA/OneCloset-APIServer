@@ -18,5 +18,6 @@ public class ClothesRegistRequestDto {
     private List<String> hashtagList;
     private List<String> weatherList;
     private List<String> tpoList;
+    private Long closetId;
 
 }
