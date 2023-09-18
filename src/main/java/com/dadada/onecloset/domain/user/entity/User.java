@@ -4,6 +4,7 @@ import com.dadada.onecloset.domain.closet.entity.Closet;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.codi.entity.Codi;
 import com.dadada.onecloset.domain.fitting.entity.Fitting;
+import com.dadada.onecloset.domain.fitting.entity.FittingModel;
 import com.dadada.onecloset.domain.user.entity.type.GenderType;
 import com.dadada.onecloset.domain.user.entity.type.LoginType;
 import com.dadada.onecloset.domain.user.entity.type.Role;
@@ -60,6 +61,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Fitting> fittingList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<FittingModel> fittingModelList;
 
     @Builder
     public User(String loginId, LoginType loginType, String nickname, String profileImg, String email) {
