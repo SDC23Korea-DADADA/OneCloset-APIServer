@@ -32,6 +32,8 @@ public class FittingModel extends BaseTimeEntity {
 
     private String denseModel;
 
+    private Boolean status;
+
     @Builder
     FittingModel(User user, FastApiModelRegistResponseDto responseDto) {
         this.user = user;
@@ -40,6 +42,11 @@ public class FittingModel extends BaseTimeEntity {
         this.poseSkeleton = responseDto.getSkeleton();
         this.keypoints = responseDto.getKeypoints();
         this.denseModel = responseDto.getDenseModel();
+        this.status = true;
+    }
+
+    public void deleteModel() {
+        this.status = false;
     }
 
 }

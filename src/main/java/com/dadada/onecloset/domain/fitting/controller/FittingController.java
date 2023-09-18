@@ -5,6 +5,7 @@ import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingDetailResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
+import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
 import com.dadada.onecloset.domain.fitting.service.FittingService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -29,6 +30,18 @@ public class FittingController {
     public CommonResponse registFittingModel(Principal principal, @RequestParam("image") MultipartFile multipartFile) throws IOException {
         Long userId = Long.parseLong(principal.getName());
         return fittingService.registFittingModel(multipartFile, userId);
+    }
+
+    @GetMapping("/model/list")
+    public DataResponse<List<ModelListResponseDto>> getFittingModelList(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.getFittingModelList(userId);
+    }
+
+    @DeleteMapping("/model/{id}")
+    public CommonResponse deleteModel(Principal principal, @PathVariable("id") Long modelId) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.deleteModel(modelId, userId);
     }
 
     @PostMapping
