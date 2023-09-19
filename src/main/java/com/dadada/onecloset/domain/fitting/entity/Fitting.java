@@ -1,6 +1,7 @@
 package com.dadada.onecloset.domain.fitting.entity;
 
 import com.dadada.onecloset.domain.user.entity.User;
+import com.dadada.onecloset.global.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Fitting {
+public class Fitting extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fitting_id")

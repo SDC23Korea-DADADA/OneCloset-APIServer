@@ -1,4 +1,4 @@
-package com.dadada.onecloset.global;
+package com.dadada.onecloset.temp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

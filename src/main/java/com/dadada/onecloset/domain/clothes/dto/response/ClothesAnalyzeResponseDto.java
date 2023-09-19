@@ -4,6 +4,7 @@ import com.dadada.onecloset.domain.clothes.entity.code.Color;
 import com.dadada.onecloset.domain.laundrysolution.entity.CareTip;
 import com.dadada.onecloset.domain.laundrysolution.entity.ClothesCare;
 import com.dadada.onecloset.domain.laundrysolution.entity.LaundryTip;
+import com.dadada.onecloset.fastapi.FastApiClothesAnalyzeResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

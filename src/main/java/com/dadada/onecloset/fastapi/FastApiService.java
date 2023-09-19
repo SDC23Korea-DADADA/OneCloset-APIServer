@@ -1,6 +1,5 @@
-package com.dadada.onecloset.global;
+package com.dadada.onecloset.fastapi;
 
-import com.dadada.onecloset.domain.clothes.dto.response.FastApiClothesAnalyzeResponseDto;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,7 @@ public class FastApiService {
     @Value("${AI_SERVER}")
     private String AI_SERVER;
 
+    // 의류여부 판단
     public Boolean isClothes(MultipartFile file) throws IOException {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/check", HttpMethod.POST, requestEntity, String.class);
@@ -36,6 +36,7 @@ public class FastApiService {
         return false;
     }
 
+    // 의류 정보와 배경 제거된 이미지를 받아온다
     public FastApiClothesAnalyzeResponseDto getClothesInfoAndRemoveBackgroundImg(MultipartFile file) throws IOException {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/rembg/info", HttpMethod.POST, requestEntity, String.class);
@@ -43,12 +44,24 @@ public class FastApiService {
         return FastApiClothesAnalyzeResponseDto.of(jsonElement);
     }
 
+    // 배경제거한 이미지를 받아온다 => 의류 수정시 사용
     public String removeBackgroundImg(MultipartFile file) throws IOException {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/rembg", HttpMethod.POST, requestEntity, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
         return jsonElement.getAsJsonObject().get("url").getAsString();
     }
+
+    // 가상피팅 모델 등록
+    public FastApiModelRegistResponseDto registFittingModel(MultipartFile file) throws IOException {
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
+        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/fitting/preprocess", HttpMethod.POST, requestEntity, String.class);
+        JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
+        return FastApiModelRegistResponseDto.of(jsonElement);
+    }
+
+    // 가상피팅 진행
+
 
 
     public HttpEntity<MultiValueMap<String, Object>> makeHttpEntity(MultipartFile file) throws IOException {

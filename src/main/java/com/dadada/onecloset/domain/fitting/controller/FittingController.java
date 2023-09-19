@@ -5,6 +5,7 @@ import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingDetailResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
+import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
 import com.dadada.onecloset.domain.fitting.service.FittingService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -12,7 +13,9 @@ import com.dadada.onecloset.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -23,6 +26,24 @@ public class FittingController {
 
     private final FittingService fittingService;
 
+    @PostMapping("/model")
+    public CommonResponse registFittingModel(Principal principal, @RequestParam("image") MultipartFile multipartFile) throws IOException {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.registFittingModel(multipartFile, userId);
+    }
+
+    @GetMapping("/model/list")
+    public DataResponse<List<ModelListResponseDto>> getFittingModelList(Principal principal) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.getFittingModelList(userId);
+    }
+
+    @DeleteMapping("/model/{id}")
+    public CommonResponse deleteModel(Principal principal, @PathVariable("id") Long modelId) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.deleteModel(modelId, userId);
+    }
+
     @PostMapping
     public DataResponse<FittingResultResponseDto> fitting(Principal principal, @ModelAttribute FittingRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
@@ -30,7 +51,7 @@ public class FittingController {
     }
 
     @PostMapping("/save")
-    public CommonResponse savelFitting(Principal principal, @ModelAttribute FittingSaveRequestDto requestDto) {
+    public CommonResponse saveFitting(Principal principal, @ModelAttribute FittingSaveRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
         return fittingService.saveFitting(requestDto, userId);
     }

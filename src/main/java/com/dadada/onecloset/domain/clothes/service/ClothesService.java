@@ -9,7 +9,7 @@ import com.dadada.onecloset.domain.clothes.dto.request.ClothesUpdateRequestDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesDetailResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesListResponseDto;
-import com.dadada.onecloset.domain.clothes.dto.response.FastApiClothesAnalyzeResponseDto;
+import com.dadada.onecloset.fastapi.FastApiClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.entity.Hashtag;
 import com.dadada.onecloset.domain.clothes.entity.Tpo;
@@ -28,7 +28,7 @@ import com.dadada.onecloset.exception.CustomException;
 import com.dadada.onecloset.exception.ExceptionType;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
-import com.dadada.onecloset.global.FastApiService;
+import com.dadada.onecloset.fastapi.FastApiService;
 import com.dadada.onecloset.global.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,7 @@ public class ClothesService {
         String originImgUrl = s3Service.upload(requestDto.getImage());
         User user = userRepository.findByIdWhereStatusIsTrue(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        Color color = colorRepository.findByCode(longToString(requestDto.getColor()))
+        Color color = colorRepository.findByCode(requestDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Type type = typeRepository.findByTypeName(requestDto.getType())
                 .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
@@ -198,7 +198,7 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
-        Color color = colorRepository.findByCode(longToString(requestDto.getColor()))
+        Color color = colorRepository.findByCode(requestDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Type type = typeRepository.findByTypeName(requestDto.getType())
                 .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
@@ -226,6 +226,16 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
         clothes.restoreClothes();
         return new CommonResponse(200, "의류 복구 성공");
+    }
+
+    @Transactional
+    public CommonResponse tempDeleteClothes(Long clothesId, Long userId) {
+        User user = userRepository.findByIdWhereStatusIsTrue(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Clothes clothes = clothesRepository.findByIdAndUser(clothesId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+        clothesRepository.delete(clothes);
+        return new CommonResponse(200, "의류 삭제 성공");
     }
 
     public void saveWeatherList(Clothes clothes, List<String> weatherList) {
@@ -262,7 +272,4 @@ public class ClothesService {
         }
     }
 
-    public String longToString(Long colorCode) {
-        return "0x" + Long.toHexString(colorCode);
-    }
 }

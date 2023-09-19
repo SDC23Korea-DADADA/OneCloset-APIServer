@@ -12,7 +12,7 @@ public class ClothesRegistRequestDto {
 
     private MultipartFile image;
     private String type;
-    private Long color;
+    private String color;
     private String material;
     private String description;
     private List<String> hashtagList;

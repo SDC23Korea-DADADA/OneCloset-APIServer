@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.clothes.dto.response;
+package com.dadada.onecloset.fastapi;
 
 import com.google.gson.JsonElement;
 import lombok.*;

@@ -84,4 +84,11 @@ public class ClothesController {
         Long userId = Long.parseLong(principal.getName());
         return clothesService.restoreClothes(clothesId, userId);
     }
+
+    // 의류DB에서 삭제
+    @DeleteMapping("/temp/delete/{id}")
+    public CommonResponse tempDeleteClothes(Principal principal, @PathVariable("id") Long clothesId) {
+        Long userId = Long.parseLong(principal.getName());
+        return clothesService.tempDeleteClothes(clothesId, userId);
+    }
 }

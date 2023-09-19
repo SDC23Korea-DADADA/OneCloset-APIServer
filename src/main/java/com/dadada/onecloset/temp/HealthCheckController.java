@@ -1,4 +1,4 @@
-package com.dadada.onecloset.global;
+package com.dadada.onecloset.temp;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
