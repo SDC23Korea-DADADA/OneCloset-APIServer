@@ -26,7 +26,7 @@ public class ClothesDetailResponseDto {
     private String img;
 
     private String color;
-    private Long colorCode;
+    private String colorCode;
 
     private String type;
     private String material;
@@ -75,7 +75,7 @@ public class ClothesDetailResponseDto {
                 .clothesId(clothes.getId())
                 .img(clothes.getOriginImg())
                 .color(clothes.getColor().getColorName())
-                .colorCode(Long.decode(clothes.getColor().getCode()))
+                .colorCode(clothes.getColor().getCode())
                 .type(clothes.getType().getTypeName())
                 .material(clothes.getMaterial().getMaterialName())
                 .description(clothes.getDescription())

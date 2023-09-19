@@ -1,11 +1,13 @@
 package com.dadada.onecloset.domain.fitting.dto.response;
 
-import java.util.List;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@NoArgsConstructor
 public class FittingResultResponseDto {
 
-    private byte[] image;
-    private Long modelId;
-    private List<Long> clothesIdList;
+    private String originImg;
+    private String fittingImg;
 
 }

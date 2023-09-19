@@ -10,13 +10,11 @@ public class ColorCheckResponseDto {
 
     private String colorName;
     private String colorCode;
-    private Long colorLong;
 
     @Builder
     public ColorCheckResponseDto(String colorName, String colorCode, Long colorLong) {
         this.colorName = colorName;
         this.colorCode = colorCode;
-        this.colorLong = colorLong;
     }
 
 }

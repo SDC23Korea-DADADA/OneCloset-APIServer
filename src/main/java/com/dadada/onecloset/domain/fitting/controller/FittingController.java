@@ -51,7 +51,7 @@ public class FittingController {
     }
 
     @PostMapping("/save")
-    public CommonResponse savelFitting(Principal principal, @ModelAttribute FittingSaveRequestDto requestDto) {
+    public CommonResponse saveFitting(Principal principal, @ModelAttribute FittingSaveRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
         return fittingService.saveFitting(requestDto, userId);
     }

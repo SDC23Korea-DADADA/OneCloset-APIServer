@@ -43,7 +43,6 @@ public class EntityController {
                     .builder()
                     .colorName(color.getColorName())
                     .colorCode(color.getCode())
-                    .colorLong(Long.decode(color.getCode()))
                     .build();
             list.add(responseDto);
         }
