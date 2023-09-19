@@ -23,7 +23,7 @@ public class ClothesAnalyzeResponseDto {
     private String image;
 
     private String color;
-    private Long colorCode;
+    private String colorCode;
 
     private String type;
     private String material;
@@ -51,7 +51,7 @@ public class ClothesAnalyzeResponseDto {
                 .builder()
                 .image(responseDto.getUrl())
                 .color(color.getColorName())
-                .colorCode(Long.decode(color.getCode()))
+                .colorCode(color.getCode())
                 .type(responseDto.getType())
                 .material(responseDto.getMaterial())
                 .laundry(clothesCare.getLaundryCourse())

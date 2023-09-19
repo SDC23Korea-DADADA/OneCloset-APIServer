@@ -12,7 +12,7 @@ public class ColorCheckResponseDto {
     private String colorCode;
 
     @Builder
-    public ColorCheckResponseDto(String colorName, String colorCode, Long colorLong) {
+    public ColorCheckResponseDto(String colorName, String colorCode) {
         this.colorName = colorName;
         this.colorCode = colorCode;
     }

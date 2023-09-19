@@ -13,7 +13,7 @@ public class ClothesUpdateRequestDto {
     private Long clothesId;
     private MultipartFile image;
     private String type;
-    private String color;
+    private String colorCode;
     private String material;
     private String description;
     private List<String> hashtagList;

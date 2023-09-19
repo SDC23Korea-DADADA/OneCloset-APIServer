@@ -68,7 +68,7 @@ public class ClothesService {
         String originImgUrl = s3Service.upload(requestDto.getImage());
         User user = userRepository.findByIdWhereStatusIsTrue(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        Color color = colorRepository.findByCode(requestDto.getColor())
+        Color color = colorRepository.findByCode(requestDto.getColorCode())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Type type = typeRepository.findByTypeName(requestDto.getType())
                 .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
@@ -106,7 +106,7 @@ public class ClothesService {
 
     public DataResponse<ClothesAnalyzeResponseDto> analyzeClothes(MultipartFile multipartFile) throws IOException {
         FastApiClothesAnalyzeResponseDto fastAPIresponseDto = fastApiService.getClothesInfoAndRemoveBackgroundImg(multipartFile);
-
+//        System.out.println(fastAPIresponseDto);
         Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial())
@@ -198,7 +198,7 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
-        Color color = colorRepository.findByCode(requestDto.getColor())
+        Color color = colorRepository.findByCode(requestDto.getColorCode())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Type type = typeRepository.findByTypeName(requestDto.getType())
                 .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
