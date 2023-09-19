@@ -28,7 +28,6 @@ public class FastApiService {
     public Boolean isClothes(MultipartFile file) throws IOException {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/check", HttpMethod.POST, requestEntity, String.class);
-
         if (response.getStatusCode() == HttpStatus.OK) {
             JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
             return Boolean.parseBoolean(jsonElement.getAsJsonObject().get("isClothes").getAsString());
@@ -41,6 +40,7 @@ public class FastApiService {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/rembg/info", HttpMethod.POST, requestEntity, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
+//        System.out.println(jsonElement);
         return FastApiClothesAnalyzeResponseDto.of(jsonElement);
     }
 
