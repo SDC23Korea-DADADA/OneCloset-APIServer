@@ -106,7 +106,6 @@ public class ClothesService {
 
     public DataResponse<ClothesAnalyzeResponseDto> analyzeClothes(MultipartFile multipartFile) throws IOException {
         FastApiClothesAnalyzeResponseDto fastAPIresponseDto = fastApiService.getClothesInfoAndRemoveBackgroundImg(multipartFile);
-//        System.out.println(fastAPIresponseDto);
         Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
         Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial())
@@ -193,7 +192,6 @@ public class ClothesService {
     @Transactional
     public CommonResponse updateClothes(ClothesUpdateRequestDto requestDto, Long userId) throws IOException {
         // thumnail 이미지는 아직 구현 안함
-        String originImgUrl = s3Service.upload(requestDto.getImage());
         User user = userRepository.findByIdWhereStatusIsTrue(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
@@ -205,7 +203,14 @@ public class ClothesService {
         Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
                 .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
 
-        clothes.updateClothes(originImgUrl, originImgUrl, requestDto.getDescription(), color, type, material);
+        System.out.println(requestDto.getImage().isEmpty());
+        if (!requestDto.getImage().isEmpty()) {
+            String originImgUrl = s3Service.upload(requestDto.getImage());
+            clothes.updateUrl(originImgUrl, originImgUrl);
+            System.out.println(123);
+        }
+
+        clothes.updateClothes(requestDto.getDescription(), color, type, material);
 
         hashtagRepository.deleteAll(hashtagRepository.findByClothes(clothes));
         weatherRepository.deleteAll(weatherRepository.findByClothes(clothes));

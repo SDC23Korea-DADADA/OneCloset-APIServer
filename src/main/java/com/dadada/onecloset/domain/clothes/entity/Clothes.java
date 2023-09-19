@@ -82,13 +82,16 @@ public class Clothes extends BaseTimeEntity {
         this.isRegisted = true;
     }
 
-    public void updateClothes(String originImg, String thumnailImg, String description, Color color, Type type, Material material) {
-        this.originImg = originImg;
-        this.thumnailImg = thumnailImg;
+    public void updateClothes(String description, Color color, Type type, Material material) {
         this.description = description;
         this.color = color;
         this.type = type;
         this.material = material;
+    }
+
+    public void updateUrl(String originImg, String thumnailImg) {
+        this.originImg = originImg;
+        this.thumnailImg = thumnailImg;
     }
 
 }
