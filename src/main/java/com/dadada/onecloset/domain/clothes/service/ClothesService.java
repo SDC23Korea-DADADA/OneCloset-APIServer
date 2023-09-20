@@ -9,6 +9,7 @@ import com.dadada.onecloset.domain.clothes.dto.request.ClothesUpdateRequestDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesDetailResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesListResponseDto;
+import com.dadada.onecloset.domain.clothes.entity.code.UpperType;
 import com.dadada.onecloset.fastapi.FastApiClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.entity.Hashtag;
@@ -53,6 +54,7 @@ public class ClothesService {
     private final MaterialRepository materialRepository;
     private final TypeRepository typeRepository;
     private final ClothesSolutionRepository clothesSolutionRepository;
+    private final UpperTypeRepository upperTypeRepository;
 
     private final WeatherRepository weatherRepository;
     private final TpoRepository tpoRepository;
@@ -112,8 +114,10 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
         ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(material)
                 .orElseThrow();
+        UpperType upperType = upperTypeRepository.findByUpperTypeName(fastAPIresponseDto.getType())
+                .orElseThrow();
 
-        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare);
+        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare, upperType.getUpperTypeName());
 
         return new DataResponse<>(200, "의류 분석 완료", responseDto);
     }

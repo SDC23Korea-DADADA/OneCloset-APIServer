@@ -21,6 +21,7 @@ public class ClothesListResponseDto {
     private Long clothesId;
     private String thumnailUrl;
     private String type;
+    private String upperType;
     private String color;
     private String material;
     private String description;
@@ -50,6 +51,7 @@ public class ClothesListResponseDto {
                 .builder()
                 .clothesId(clothes.getId())
                 .thumnailUrl(clothes.getThumnailImg())
+                .upperType(clothes.getType().getUpperTypeCode().getUpperTypeName())
                 .type(clothes.getType().getTypeName())
                 .color(clothes.getColor().getColorName())
                 .material(clothes.getMaterial().getMaterialName())
