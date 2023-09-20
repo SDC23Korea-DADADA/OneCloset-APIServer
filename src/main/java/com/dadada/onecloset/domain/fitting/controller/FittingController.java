@@ -2,6 +2,7 @@ package com.dadada.onecloset.domain.fitting.controller;
 
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
+import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingDetailResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
@@ -9,9 +10,7 @@ import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
 import com.dadada.onecloset.domain.fitting.service.FittingService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
-import com.dadada.onecloset.util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,10 +50,22 @@ public class FittingController {
         return fittingService.fitting(requestDto, userId);
     }
 
+    @DeleteMapping("/{id}")
+    public CommonResponse deleteFitting(Principal principal, @PathVariable("id") Long fittingId) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.deleteFitting(fittingId, userId);
+    }
+
     @PostMapping("/save")
-    public CommonResponse saveFitting(Principal principal, @ModelAttribute FittingSaveRequestDto requestDto) {
+    public DataResponse<Long> saveFitting(Principal principal, @RequestBody FittingSaveRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
         return fittingService.saveFitting(requestDto, userId);
+    }
+
+    @PostMapping("/time")
+    public CommonResponse changeWearingAt(Principal principal, @RequestBody FittingDateUpdateRequestDto requestDto) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.changeWearingAt(requestDto, userId);
     }
 
     @GetMapping("/list")
@@ -63,10 +74,5 @@ public class FittingController {
         return fittingService.getFittingList(userId);
     }
 
-    @GetMapping("/{id}")
-    public DataResponse<FittingDetailResponseDto> getFittingDetail(Principal principal, @PathVariable("id") Long fittingId) {
-        Long userId = Long.parseLong(principal.getName());
-        return fittingService.getFittingDetail(fittingId, userId);
-    }
 
 }
