@@ -11,19 +11,21 @@ import lombok.*;
 public class FastApiModelRegistResponseDto {
 
     private String originImg;
-    private String segmentation;
+    private String labelMap;
     private String skeleton;
-    private String keypoints;
-    private String denseModel;
+    private String keypoint;
+    private String dense;
+    private String denseNpz;
 
     public static FastApiModelRegistResponseDto of(JsonElement jsonElement) {
         return FastApiModelRegistResponseDto
                 .builder()
                 .originImg(jsonElement.getAsJsonObject().get("originImg").getAsString())
-                .segmentation(jsonElement.getAsJsonObject().get("segmentation").getAsString())
+                .labelMap(jsonElement.getAsJsonObject().get("labelMap").getAsString())
                 .skeleton(jsonElement.getAsJsonObject().get("skeleton").getAsString())
-                .keypoints(jsonElement.getAsJsonObject().get("keypoints").getAsString())
-                .denseModel(jsonElement.getAsJsonObject().get("denseModel").getAsString())
+                .keypoint(jsonElement.getAsJsonObject().get("keypoint").getAsString())
+                .dense(jsonElement.getAsJsonObject().get("dense").getAsString())
+                .denseNpz(jsonElement.getAsJsonObject().get("denseNpz").getAsString())
                 .build();
     }
 
