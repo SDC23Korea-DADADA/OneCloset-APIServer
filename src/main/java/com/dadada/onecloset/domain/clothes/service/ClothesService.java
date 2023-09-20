@@ -54,7 +54,6 @@ public class ClothesService {
     private final MaterialRepository materialRepository;
     private final TypeRepository typeRepository;
     private final ClothesSolutionRepository clothesSolutionRepository;
-    private final UpperTypeRepository upperTypeRepository;
 
     private final WeatherRepository weatherRepository;
     private final TpoRepository tpoRepository;
@@ -114,10 +113,8 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
         ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(material)
                 .orElseThrow();
-        UpperType upperType = upperTypeRepository.findByUpperTypeName(fastAPIresponseDto.getType())
-                .orElseThrow();
 
-        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare, upperType.getUpperTypeName());
+        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare);
 
         return new DataResponse<>(200, "의류 분석 완료", responseDto);
     }
