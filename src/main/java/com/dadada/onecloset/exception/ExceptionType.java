@@ -25,7 +25,8 @@ public enum ExceptionType {
     MATERIAL_NOT_FOUND(4005, "등록할 수 없는 재질입니다."),
 
     MODEL_NOT_FOUND(4006, "존재하지 않는 모델 입니다."),
-    FITTING_NOT_FOUND(4007, "존재하지 않는 피팅 정보입니다.");
+    FITTING_NOT_FOUND(4007, "존재하지 않는 피팅 정보입니다."),
+    CARE_SOLUTION_NOT_FOUND(4008, "세탁정보가 존재하지 않습니다.");
 
     private final int code;
     private final String message;

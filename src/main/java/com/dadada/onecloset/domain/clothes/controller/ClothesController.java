@@ -2,6 +2,7 @@ package com.dadada.onecloset.domain.clothes.controller;
 
 import com.dadada.onecloset.domain.clothes.dto.request.ClothesRegistRequestDto;
 import com.dadada.onecloset.domain.clothes.dto.request.ClothesUpdateRequestDto;
+import com.dadada.onecloset.domain.clothes.dto.response.ClotheaCareSolutionResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesDetailResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesListResponseDto;
@@ -83,6 +84,11 @@ public class ClothesController {
     public CommonResponse restoreClothes(Principal principal, @PathVariable("id") Long clothesId) {
         Long userId = Long.parseLong(principal.getName());
         return clothesService.restoreClothes(clothesId, userId);
+    }
+
+    @GetMapping("/material/{material}")
+    public DataResponse<ClotheaCareSolutionResponseDto> getClothesCareSolutionByMaterial(@PathVariable("material") String material) {
+        return clothesService.getClothesCareSolutionByMaterial(material);
     }
 
     // 의류DB에서 삭제

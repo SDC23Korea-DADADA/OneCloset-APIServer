@@ -28,24 +28,7 @@ public class ClothesAnalyzeResponseDto {
     private String type;
     private String material;
 
-    private String laundry;
-    private String dryer;
-    private String airDresser;
-
-    private List<String> laundryTip;
-    private List<String> careTip;
-
-    public static ClothesAnalyzeResponseDto of(FastApiClothesAnalyzeResponseDto responseDto, Color color, ClothesCare clothesCare) throws IOException {
-
-        List<String> laundryTip = new ArrayList<>();
-        for (LaundryTip laundry : clothesCare.getLaundryTipList()) {
-            laundryTip.add(laundry.getTip());
-        }
-
-        List<String> careTip = new ArrayList<>();
-        for (CareTip care : clothesCare.getCareTipList()) {
-            careTip.add(care.getTip());
-        }
+    public static ClothesAnalyzeResponseDto of(FastApiClothesAnalyzeResponseDto responseDto, Color color) throws IOException {
 
         return ClothesAnalyzeResponseDto
                 .builder()
@@ -54,11 +37,6 @@ public class ClothesAnalyzeResponseDto {
                 .colorCode(color.getCode())
                 .type(responseDto.getType())
                 .material(responseDto.getMaterial())
-                .laundry(clothesCare.getLaundryCourse())
-                .dryer(clothesCare.getDryerCourse())
-                .airDresser(clothesCare.getAirDresserCourse())
-                .laundryTip(laundryTip)
-                .careTip(careTip)
                 .build();
     }
 
