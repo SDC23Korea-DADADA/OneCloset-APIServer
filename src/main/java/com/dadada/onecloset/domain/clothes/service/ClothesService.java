@@ -6,6 +6,7 @@ import com.dadada.onecloset.domain.closet.repository.ClosetClothesRepository;
 import com.dadada.onecloset.domain.closet.repository.ClosetRepository;
 import com.dadada.onecloset.domain.clothes.dto.request.ClothesRegistRequestDto;
 import com.dadada.onecloset.domain.clothes.dto.request.ClothesUpdateRequestDto;
+import com.dadada.onecloset.domain.clothes.dto.response.ClotheaCareSolutionResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesAnalyzeResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesDetailResponseDto;
 import com.dadada.onecloset.domain.clothes.dto.response.ClothesListResponseDto;
@@ -109,12 +110,8 @@ public class ClothesService {
         FastApiClothesAnalyzeResponseDto fastAPIresponseDto = fastApiService.getClothesInfoAndRemoveBackgroundImg(multipartFile);
         Color color = colorRepository.findByColorName(fastAPIresponseDto.getColor())
                 .orElseThrow(() -> new CustomException(ExceptionType.COLOR_NOT_FOUND));
-        Material material = materialRepository.findByMaterialName(fastAPIresponseDto.getMaterial())
-                .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
-        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(material)
-                .orElseThrow();
 
-        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color, clothesCare);
+        ClothesAnalyzeResponseDto responseDto = ClothesAnalyzeResponseDto.of(fastAPIresponseDto, color);
 
         return new DataResponse<>(200, "의류 분석 완료", responseDto);
     }
@@ -167,7 +164,7 @@ public class ClothesService {
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(clothesId, user)
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
         ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(clothes.getMaterial())
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ExceptionType.CARE_SOLUTION_NOT_FOUND));
 
         ClothesDetailResponseDto responseDto = ClothesDetailResponseDto.of(clothes, clothesCare);
 
@@ -240,6 +237,15 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
         clothesRepository.delete(clothes);
         return new CommonResponse(200, "의류 삭제 성공");
+    }
+
+    public DataResponse<ClotheaCareSolutionResponseDto> getClothesCareSolutionByMaterial(String materialInfo) {
+        Material material = materialRepository.findByMaterialName(materialInfo)
+                .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
+        ClothesCare clothesCare = clothesSolutionRepository.findByMaterialCode(material)
+                .orElseThrow(() -> new CustomException(ExceptionType.CARE_SOLUTION_NOT_FOUND));
+        ClotheaCareSolutionResponseDto responseDto = ClotheaCareSolutionResponseDto.of(clothesCare);
+        return new DataResponse<>(200, "세탁 정보 제공", responseDto);
     }
 
     public void saveWeatherList(Clothes clothes, List<String> weatherList) {
