@@ -23,25 +23,22 @@ public class FittingModel extends BaseTimeEntity {
     private User user;
 
     private String originImg;
-
-    private String segmentation;
-
-    private String poseSkeleton;
-
-    private String keypoints;
-
-    private String denseModel;
-
+    private String labelMap;
+    private String skeleton;
+    private String keypoint;
+    private String dense;
+    private String denseNpz;
     private Boolean status;
 
     @Builder
     FittingModel(User user, FastApiModelRegistResponseDto responseDto) {
         this.user = user;
         this.originImg = responseDto.getOriginImg();
-        this.segmentation = responseDto.getSegmentation();
-        this.poseSkeleton = responseDto.getSkeleton();
-        this.keypoints = responseDto.getKeypoints();
-        this.denseModel = responseDto.getDenseModel();
+        this.labelMap = responseDto.getLabelMap();
+        this.skeleton = responseDto.getSkeleton();
+        this.keypoint = responseDto.getKeypoint();
+        this.dense = responseDto.getDense();
+        this.denseNpz = responseDto.getDenseNpz();
         this.status = true;
     }
 
