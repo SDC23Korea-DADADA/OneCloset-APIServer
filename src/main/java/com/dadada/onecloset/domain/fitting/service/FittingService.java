@@ -3,15 +3,18 @@ package com.dadada.onecloset.domain.fitting.service;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
 import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
+import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingDetailResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
+import com.dadada.onecloset.domain.fitting.entity.Fitting;
 import com.dadada.onecloset.domain.fitting.entity.FittingModel;
 import com.dadada.onecloset.domain.fitting.repository.FittingClothesRepository;
 import com.dadada.onecloset.domain.fitting.repository.FittingModelRepository;
+import com.dadada.onecloset.domain.fitting.repository.FittingRepository;
 import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.repository.UserRepository;
 import com.dadada.onecloset.exception.CustomException;
@@ -38,9 +41,12 @@ public class FittingService {
 
     private final FastApiService fastApiService;
     private final UserRepository userRepository;
+    private final ClothesRepository clothesRepository;
+
+    private final FittingRepository fittingRepository;
     private final FittingModelRepository fittingModelRepository;
     private final FittingClothesRepository fittingClothesRepository;
-    private final ClothesRepository clothesRepository;
+
 
     @Transactional
     public CommonResponse registFittingModel(MultipartFile multipartFile, Long userId) throws IOException {
@@ -95,20 +101,39 @@ public class FittingService {
         return new DataResponse<>(200, "가상피팅 완료", responseDto);
     }
 
-    public CommonResponse saveFitting(FittingSaveRequestDto requestDto, Long userId) {
-        // 유저
+    @Transactional
+    public DataResponse<Long> saveFitting(FittingSaveRequestDto requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        // 피팅모델
         FittingModel fittingModel = fittingModelRepository.findById(requestDto.getModelId())
                 .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
-        // 피팅 이미지
 
-        // desc
-        return new CommonResponse(200, "가상피팅 저장완료");
+        Fitting fitting = Fitting
+                .builder()
+                .fittingModel(fittingModel)
+                .fittingImg(requestDto.getFittingImg())
+                .fittingThumnailImg(requestDto.getFittingImg())
+                .user(user)
+                .build();
+
+        Fitting fittingSave = fittingRepository.save(fitting);
+
+        return new DataResponse<>(200, "가상피팅 저장완료", fittingSave.getId());
     }
 
     // 가상피팅 날짜 수정
+    @Transactional
+    public CommonResponse changeWearingAt(FittingDateUpdateRequestDto requestDto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Fitting fitting = fittingRepository.findByIdAndUser(requestDto.getClothesId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.FITTING_NOT_FOUND));
+        String wearingAtMonth = requestDto.getWearingAt();
+        fitting.editWearingAt(wearingAtMonth, wearingAtMonth.substring(0, 7));
+        return new CommonResponse(200, "날짜 등록/수정 성공");
+    }
+
+
     public DataResponse<List<FittingListResponseDto>> getFittingList(Long userId) {
         return new DataResponse<>(200, "가상피팅 목록조회");
     }
