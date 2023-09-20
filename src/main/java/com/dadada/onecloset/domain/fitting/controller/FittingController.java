@@ -50,6 +50,12 @@ public class FittingController {
         return fittingService.fitting(requestDto, userId);
     }
 
+    @DeleteMapping("/{id}")
+    public CommonResponse deleteFitting(Principal principal, @PathVariable("id") Long fittingId) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.deleteFitting(fittingId, userId);
+    }
+
     @PostMapping("/save")
     public DataResponse<Long> saveFitting(Principal principal, @RequestBody FittingSaveRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
@@ -68,10 +74,5 @@ public class FittingController {
         return fittingService.getFittingList(userId);
     }
 
-    @GetMapping("/{id}")
-    public DataResponse<FittingDetailResponseDto> getFittingDetail(Principal principal, @PathVariable("id") Long fittingId) {
-        Long userId = Long.parseLong(principal.getName());
-        return fittingService.getFittingDetail(fittingId, userId);
-    }
 
 }

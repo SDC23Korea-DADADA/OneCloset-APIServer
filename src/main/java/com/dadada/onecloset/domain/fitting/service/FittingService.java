@@ -47,7 +47,6 @@ public class FittingService {
     private final FittingModelRepository fittingModelRepository;
     private final FittingClothesRepository fittingClothesRepository;
 
-
     @Transactional
     public CommonResponse registFittingModel(MultipartFile multipartFile, Long userId) throws IOException {
         User user = userRepository.findById(userId)
@@ -133,15 +132,9 @@ public class FittingService {
         return new CommonResponse(200, "날짜 등록/수정 성공");
     }
 
-
     public DataResponse<List<FittingListResponseDto>> getFittingList(Long userId) {
         return new DataResponse<>(200, "가상피팅 목록조회");
     }
-
-    public DataResponse<FittingDetailResponseDto> getFittingDetail(Long fittingId, Long userId) {
-        return new DataResponse<>(200,"가상피팅 상세조회");
-    }
-
 
     public FittingCheckDataDto checkFitting(FittingRequestDto requestDto, User user) {
         Clothes upper = clothesRepository.findByIdAndUser(requestDto.getUpperId(), user).orElse(null);
@@ -181,6 +174,16 @@ public class FittingService {
                 .fittingRequestDtoList(requestDtoList)
                 .build();
 
+    }
+
+    @Transactional
+    public CommonResponse deleteFitting(Long fittingId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Fitting fitting = fittingRepository.findByIdAndUser(fittingId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.FITTING_NOT_FOUND));
+        fittingRepository.delete(fitting);
+        return new CommonResponse(200, "의류 삭제 완료");
     }
 
 }
