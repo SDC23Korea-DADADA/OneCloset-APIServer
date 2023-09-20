@@ -62,7 +62,7 @@ public class ClothesService {
     private final FastApiService fastApiService;
 
     @Transactional
-    public CommonResponse registClothes(ClothesRegistRequestDto requestDto, Long userId) throws Exception {
+    public DataResponse<Long> registClothes(ClothesRegistRequestDto requestDto, Long userId) throws Exception {
 
         // thumnail 이미지는 아직 구현 안함
         String originImgUrl = s3Service.upload(requestDto.getImage());
@@ -101,7 +101,7 @@ public class ClothesService {
                 .build();
         closetClothesRepository.save(closetClothes);
 
-        return new CommonResponse(200, "의류 등록 성공");
+        return new DataResponse<>(200, "의류 등록 성공", saveClothes.getId());
     }
 
     public DataResponse<ClothesAnalyzeResponseDto> analyzeClothes(MultipartFile multipartFile) throws IOException {
@@ -203,11 +203,9 @@ public class ClothesService {
         Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
                 .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
 
-        System.out.println(requestDto.getImage().isEmpty());
         if (!requestDto.getImage().isEmpty()) {
             String originImgUrl = s3Service.upload(requestDto.getImage());
             clothes.updateUrl(originImgUrl, originImgUrl);
-            System.out.println(123);
         }
 
         clothes.updateClothes(requestDto.getDescription(), color, type, material);
@@ -245,12 +243,14 @@ public class ClothesService {
 
     public void saveWeatherList(Clothes clothes, List<String> weatherList) {
         for (String weather : weatherList) {
+            WeatherType weatherType = WeatherType.fromString(weather);
             Weather weatherEntity = Weather
                     .builder()
                     .clothes(clothes)
                     .weather(WeatherType.fromString(weather))
                     .build();
-            weatherRepository.save(weatherEntity);
+            if (weatherType != null)
+                weatherRepository.save(weatherEntity);
         }
     }
 

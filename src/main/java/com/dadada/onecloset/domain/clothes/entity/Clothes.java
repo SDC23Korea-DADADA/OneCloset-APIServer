@@ -50,16 +50,16 @@ public class Clothes extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ClosetClothes> closetClothesList;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Hashtag> hashtagList;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Tpo> tpoList;
 
-    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clothes", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Weather> weatherList;
 
     @Builder

@@ -10,6 +10,7 @@ import com.dadada.onecloset.domain.fitting.service.FittingService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
 import com.dadada.onecloset.util.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class FittingController {
     }
 
     @PostMapping
-    public DataResponse<FittingResultResponseDto> fitting(Principal principal, @ModelAttribute FittingRequestDto requestDto) {
+    public DataResponse<FittingResultResponseDto> fitting(Principal principal, @RequestBody FittingRequestDto requestDto) throws JsonProcessingException {
         Long userId = Long.parseLong(principal.getName());
         return fittingService.fitting(requestDto, userId);
     }

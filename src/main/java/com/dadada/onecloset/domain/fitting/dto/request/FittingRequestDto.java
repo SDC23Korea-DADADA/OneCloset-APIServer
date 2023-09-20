@@ -1,10 +1,14 @@
 package com.dadada.onecloset.domain.fitting.dto.request;
 
+import lombok.*;
+
+@Getter
+@Setter
 public class FittingRequestDto {
 
-    private String model;
-    private String upper;
-    private String bottom;
-    private String onepiece;
+    private Long modelId;
+    private Long upperId;
+    private Long bottomId;
+    private Long onepieceId;
 
 }

@@ -1,5 +1,8 @@
 package com.dadada.onecloset.domain.fitting.service;
 
+import com.dadada.onecloset.domain.clothes.entity.Clothes;
+import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
+import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingDetailResponseDto;
@@ -13,10 +16,12 @@ import com.dadada.onecloset.domain.user.entity.User;
 import com.dadada.onecloset.domain.user.repository.UserRepository;
 import com.dadada.onecloset.exception.CustomException;
 import com.dadada.onecloset.exception.ExceptionType;
+import com.dadada.onecloset.fastapi.FastApiFittingRequestDto;
 import com.dadada.onecloset.fastapi.FastApiModelRegistResponseDto;
 import com.dadada.onecloset.fastapi.FastApiService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +40,7 @@ public class FittingService {
     private final UserRepository userRepository;
     private final FittingModelRepository fittingModelRepository;
     private final FittingClothesRepository fittingClothesRepository;
+    private final ClothesRepository clothesRepository;
 
     @Transactional
     public CommonResponse registFittingModel(MultipartFile multipartFile, Long userId) throws IOException {
@@ -70,34 +76,77 @@ public class FittingService {
         return new CommonResponse(200, "모델 삭제 성공");
     }
 
-    public DataResponse<FittingResultResponseDto> fitting(FittingRequestDto requestDto, Long userId) {
+    public DataResponse<FittingResultResponseDto> fitting(FittingRequestDto requestDto, Long userId) throws JsonProcessingException {
         // 피팅 가능한 조합인지 확인
-        System.out.println(requestDto);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        FittingModel fittingModel = fittingModelRepository.findByIdAndUserWhereStatusIsTrue(requestDto.getModelId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
 
-        // 가상피팅 요청해서 피팅된 url 받기
-
-        // Fast API에서 출력시키기
-
-        FittingResultResponseDto responseDto = new FittingResultResponseDto();
-        responseDto.setFittingImg("https://fitsta-bucket.s3.ap-northeast-2.amazonaws.com/6ceee621-1dd4-4d4a-aec6-31a7b204d98f-images.jpg");
-        responseDto.setFittingImg("https://fitsta-bucket.s3.ap-northeast-2.amazonaws.com/6f4ef69c-0a23-4e9e-8b0e-b0de9e2bdd9f-images.jpg");
+        FittingCheckDataDto checkDataDto = checkFitting(requestDto, user);
+        if (!checkDataDto.getCheck()) {
+            return new DataResponse<>(400, "가상피팅 가능한 조합이 아닙니다.");
+        }
+        // Fast API로 요청해서 피팅된 url 받기
+        FittingResultResponseDto responseDto = fastApiService.fitting(checkDataDto.getFittingRequestDtoList());
+        responseDto.setOriginImg(fittingModel.getOriginImg());
+        responseDto.setModelId(requestDto.getModelId());
+        responseDto.setClothesInfoList(checkDataDto.getFittingRequestDtoList());
         return new DataResponse<>(200, "가상피팅 완료", responseDto);
     }
 
     public CommonResponse saveFitting(FittingSaveRequestDto requestDto, Long userId) {
-
         return new CommonResponse(200, "가상피팅 저장완료");
-
     }
 
     // 가상피팅 날짜 수정
-
     public DataResponse<List<FittingListResponseDto>> getFittingList(Long userId) {
         return new DataResponse<>(200, "가상피팅 목록조회");
     }
 
     public DataResponse<FittingDetailResponseDto> getFittingDetail(Long fittingId, Long userId) {
         return new DataResponse<>(200,"가상피팅 상세조회");
+    }
+
+
+    public FittingCheckDataDto checkFitting(FittingRequestDto requestDto, User user) {
+        Clothes upper = clothesRepository.findByIdAndUser(requestDto.getUpperId(), user).orElse(null);
+        Clothes lower = clothesRepository.findByIdAndUser(requestDto.getBottomId(), user).orElse(null);
+        Clothes dresses = clothesRepository.findByIdAndUser(requestDto.getOnepieceId(), user).orElse(null);
+
+        int checkNun = 0;
+        boolean check = true;
+        List<FastApiFittingRequestDto> requestDtoList = new ArrayList<>();
+
+        if (upper != null) {
+            if (upper.getType().getUpperTypeCode().getUpperTypeName().equals("상의")) {
+                checkNun++;
+                requestDtoList.add(FastApiFittingRequestDto.of("upper", upper.getOriginImg()));
+            }
+        }
+
+        if (lower != null) {
+            if (lower.getType().getUpperTypeCode().getUpperTypeName().equals("하의")) {
+                checkNun++;
+                requestDtoList.add(FastApiFittingRequestDto.of("lower", lower.getOriginImg()));
+            }
+        }
+        if (dresses != null) {
+            if (dresses.getType().getUpperTypeCode().getUpperTypeName().equals("한벌옷")) {
+                checkNun = checkNun + 2;
+                requestDtoList.add(FastApiFittingRequestDto.of("dress", dresses.getOriginImg()));
+            }
+        }
+
+        if (checkNun == 0 || checkNun > 2)
+            check = false;
+
+        return FittingCheckDataDto
+                .builder()
+                .check(check)
+                .fittingRequestDtoList(requestDtoList)
+                .build();
+
     }
 
 }

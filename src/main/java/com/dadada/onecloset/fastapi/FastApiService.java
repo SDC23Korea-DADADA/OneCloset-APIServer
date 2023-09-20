@@ -1,8 +1,16 @@
 package com.dadada.onecloset.fastapi;
 
+import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
+import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
+import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
+import com.dadada.onecloset.global.DataResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -13,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -40,7 +50,6 @@ public class FastApiService {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/clothes/rembg/info", HttpMethod.POST, requestEntity, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
-//        System.out.println(jsonElement);
         return FastApiClothesAnalyzeResponseDto.of(jsonElement);
     }
 
@@ -61,7 +70,24 @@ public class FastApiService {
     }
 
     // 가상피팅 진행
+    public FittingResultResponseDto fitting(List<FastApiFittingRequestDto> fittingCheckDataDtoList) throws JsonProcessingException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
+        HttpEntity<String> request = getHttpEntity(headers, fittingCheckDataDtoList);
+
+        RestTemplate rt = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String personResultAsJsonStr = rt.postForObject("http://127.0.0.1:8000/fast/fitting/", request, String.class);
+        JsonNode jsonNode = objectMapper.readTree(personResultAsJsonStr);
+
+        // Fast API에서 출력시키기
+        FittingResultResponseDto responseDto = new FittingResultResponseDto();
+        responseDto.setOriginImg("https://fitsta-bucket.s3.ap-northeast-2.amazonaws.com/6ceee621-1dd4-4d4a-aec6-31a7b204d98f-images.jpg");
+        responseDto.setFittingImg(jsonNode.path("image").asText());
+        return responseDto;
+
+    }
 
 
     public HttpEntity<MultiValueMap<String, Object>> makeHttpEntity(MultipartFile file) throws IOException {
@@ -79,5 +105,18 @@ public class FastApiService {
         return new HttpEntity<>(body, headers);
     }
 
+
+    private static HttpEntity<String> getHttpEntity(HttpHeaders headers, List<FastApiFittingRequestDto> fittingCheckDataDtoList) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("model", "model url");
+        jsonObject.put("labelMap", "seg url");
+        jsonObject.put("skeleton", "pose url");
+        jsonObject.put("keypoint", "dense url");
+        jsonObject.put("dense", "points");
+        jsonObject.put("denseNpz", "points");
+        jsonObject.put("clothesList", fittingCheckDataDtoList);
+        return new HttpEntity<>(jsonObject.toString(), headers);
+
+    }
 
 }
