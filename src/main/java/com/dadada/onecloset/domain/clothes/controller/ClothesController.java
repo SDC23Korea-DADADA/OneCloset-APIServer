@@ -36,7 +36,7 @@ public class ClothesController {
     }
 
     @PostMapping
-    public CommonResponse registClothes(Principal principal, @ModelAttribute ClothesRegistRequestDto requestDto) throws Exception {
+    public DataResponse<Long> registClothes(Principal principal, @ModelAttribute ClothesRegistRequestDto requestDto) throws Exception {
         Long userId = Long.parseLong(principal.getName());
         return clothesService.registClothes(requestDto, userId);
     }
