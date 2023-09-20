@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FastApiFittingRequestDto {
 
+    private Long clothesId;
     private String type;
     private String url;
 
-    public static FastApiFittingRequestDto of(String type, String url) {
+    public static FastApiFittingRequestDto of(Long clothesId, String type, String url) {
         return FastApiFittingRequestDto
                 .builder()
+                .clothesId(clothesId)
                 .type(type)
                 .url(url)
                 .build();

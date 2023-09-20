@@ -29,6 +29,7 @@ public class ClothesDetailResponseDto {
     private String colorCode;
 
     private String type;
+    private String upperType;
     private String material;
     private String description;
 
@@ -76,6 +77,7 @@ public class ClothesDetailResponseDto {
                 .img(clothes.getOriginImg())
                 .color(clothes.getColor().getColorName())
                 .colorCode(clothes.getColor().getCode())
+                .upperType(clothes.getType().getUpperTypeCode().getUpperTypeName())
                 .type(clothes.getType().getTypeName())
                 .material(clothes.getMaterial().getMaterialName())
                 .description(clothes.getDescription())

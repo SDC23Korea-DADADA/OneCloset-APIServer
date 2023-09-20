@@ -96,6 +96,15 @@ public class FittingService {
     }
 
     public CommonResponse saveFitting(FittingSaveRequestDto requestDto, Long userId) {
+        // 유저
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        // 피팅모델
+        FittingModel fittingModel = fittingModelRepository.findById(requestDto.getModelId())
+                .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
+        // 피팅 이미지
+
+        // desc
         return new CommonResponse(200, "가상피팅 저장완료");
     }
 
@@ -121,20 +130,20 @@ public class FittingService {
         if (upper != null) {
             if (upper.getType().getUpperTypeCode().getUpperTypeName().equals("상의")) {
                 checkNun++;
-                requestDtoList.add(FastApiFittingRequestDto.of("upper", upper.getOriginImg()));
+                requestDtoList.add(FastApiFittingRequestDto.of(upper.getId(), "upper", upper.getOriginImg()));
             }
         }
 
         if (lower != null) {
             if (lower.getType().getUpperTypeCode().getUpperTypeName().equals("하의")) {
                 checkNun++;
-                requestDtoList.add(FastApiFittingRequestDto.of("lower", lower.getOriginImg()));
+                requestDtoList.add(FastApiFittingRequestDto.of(lower.getId(), "lower", lower.getOriginImg()));
             }
         }
         if (dresses != null) {
             if (dresses.getType().getUpperTypeCode().getUpperTypeName().equals("한벌옷")) {
                 checkNun = checkNun + 2;
-                requestDtoList.add(FastApiFittingRequestDto.of("dress", dresses.getOriginImg()));
+                requestDtoList.add(FastApiFittingRequestDto.of(dresses.getId(), "dress", dresses.getOriginImg()));
             }
         }
 
