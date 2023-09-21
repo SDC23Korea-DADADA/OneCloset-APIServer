@@ -1,11 +1,13 @@
 package com.dadada.onecloset.domain.fitting.controller;
 
+import com.dadada.onecloset.domain.fitting.dto.FittingModelRegistDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
+import com.dadada.onecloset.domain.fitting.entity.FittingModel;
 import com.dadada.onecloset.domain.fitting.service.FittingService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -28,7 +30,8 @@ public class FittingController {
     @PostMapping("/model")
     public CommonResponse registFittingModel(Principal principal, @RequestParam("image") MultipartFile multipartFile) throws IOException {
         Long userId = Long.parseLong(principal.getName());
-        return fittingService.registFittingModel(multipartFile, userId);
+        FittingModelRegistDataDto registDataDto = fittingService.registFittingModel(multipartFile, userId);
+        return fittingService.getModelInfoAndUpdateFittingModel(registDataDto);
     }
 
     @GetMapping("/model/list")
