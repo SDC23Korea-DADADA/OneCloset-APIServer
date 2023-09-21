@@ -14,12 +14,17 @@ public class ModelListResponseDto {
 
     private Long modelId;
     private String modelImg;
+    private boolean isRegist;
 
     public static ModelListResponseDto of(FittingModel fittingModel) {
+
+        boolean isRegist = fittingModel.getDense() != null;
+
         return ModelListResponseDto
                 .builder()
                 .modelId(fittingModel.getId())
                 .modelImg(fittingModel.getOriginImg())
+                .isRegist(isRegist)
                 .build();
     }
 

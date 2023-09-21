@@ -3,6 +3,7 @@ package com.dadada.onecloset.fastapi;
 import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
+import com.dadada.onecloset.domain.fitting.entity.FittingModel;
 import com.dadada.onecloset.global.DataResponse;
 import com.dadada.onecloset.global.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,7 +32,6 @@ import java.util.Objects;
 public class FastApiService {
 
     private final RestTemplate restTemplate;
-    private final S3Service s3Service;
 
     @Value("${AI_SERVER}")
     private String AI_SERVER;
@@ -64,26 +64,22 @@ public class FastApiService {
     }
 
     // 가상피팅 모델 등록
-    public FastApiModelRegistResponseDto registFittingModel(MultipartFile file) throws IOException {
-        String url = s3Service.upload(file);
-
+    public FastApiModelRegistResponseDto registFittingModel(String url) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("image", url);
-
         HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
-
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/fitting/preprocess", HttpMethod.POST, request, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
         return FastApiModelRegistResponseDto.of(jsonElement);
     }
 
-    public String fitting(List<FastApiFittingRequestDto> fittingCheckDataDtoList) throws JsonProcessingException {
+    public String fitting(List<FastApiFittingRequestDto> fittingCheckDataDtoList, FittingModel fittingModel) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> request = getHttpEntity(headers, fittingCheckDataDtoList);
+        HttpEntity<String> request = getHttpEntity(headers, fittingCheckDataDtoList, fittingModel);
 
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -111,14 +107,14 @@ public class FastApiService {
     }
 
 
-    private static HttpEntity<String> getHttpEntity(HttpHeaders headers, List<FastApiFittingRequestDto> fittingCheckDataDtoList) {
+    private static HttpEntity<String> getHttpEntity(HttpHeaders headers, List<FastApiFittingRequestDto> fittingCheckDataDtoList, FittingModel fittingModel) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("model", "model url");
-        jsonObject.put("labelMap", "seg url");
-        jsonObject.put("skeleton", "pose url");
-        jsonObject.put("keypoint", "dense url");
-        jsonObject.put("dense", "points");
-        jsonObject.put("denseNpz", "points");
+        jsonObject.put("model", fittingModel.getOriginImg());
+        jsonObject.put("labelMap", fittingModel.getLabelMap());
+        jsonObject.put("skeleton", fittingModel.getSkeleton());
+        jsonObject.put("keypoint", fittingModel.getKeypoint());
+        jsonObject.put("dense", fittingModel.getDense());
+        jsonObject.put("denseNpz", fittingModel.getDenseNpz());
         jsonObject.put("clothesList", fittingCheckDataDtoList);
         return new HttpEntity<>(jsonObject.toString(), headers);
 

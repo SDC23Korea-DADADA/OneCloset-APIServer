@@ -6,7 +6,6 @@ import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
-import com.dadada.onecloset.domain.fitting.dto.response.FittingDetailResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
@@ -25,7 +24,9 @@ import com.dadada.onecloset.fastapi.FastApiModelRegistResponseDto;
 import com.dadada.onecloset.fastapi.FastApiService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
+import com.dadada.onecloset.global.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,16 +49,28 @@ public class FittingService {
     private final FittingModelRepository fittingModelRepository;
     private final FittingClothesRepository fittingClothesRepository;
 
+    private final S3Service s3Service;
+    private final EntityManager entityManager;
+
     @Transactional
     public CommonResponse registFittingModel(MultipartFile multipartFile, Long userId) throws IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        FastApiModelRegistResponseDto responseDto = fastApiService.registFittingModel(multipartFile);
+        String url = s3Service.upload(multipartFile);
+
+        System.out.println("사진 업로드");
         FittingModel fittingModel = FittingModel.builder()
                 .user(user)
-                .responseDto(responseDto)
+                .originImg(url)
                 .build();
-        fittingModelRepository.save(fittingModel);
+        FittingModel fittingModelSave = fittingModelRepository.save(fittingModel);
+        entityManager.flush();
+
+        System.out.println("모델 저장");
+
+        FastApiModelRegistResponseDto responseDto = fastApiService.registFittingModel(url);
+        fittingModelSave.updateInfo(responseDto);
+
         return new CommonResponse(200, "모델이 등록되었습니다.");
     }
 
@@ -94,7 +107,7 @@ public class FittingService {
             return new DataResponse<>(400, "가상피팅 가능한 조합이 아닙니다.");
         }
 
-        String fittingImg = fastApiService.fitting(checkDataDto.getFittingRequestDtoList());
+        String fittingImg = fastApiService.fitting(checkDataDto.getFittingRequestDtoList(), fittingModel);
         FittingResultResponseDto responseDto = FittingResultResponseDto
                 .builder()
                 .originImg(fittingModel.getOriginImg())
