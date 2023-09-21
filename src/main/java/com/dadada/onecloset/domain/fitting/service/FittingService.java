@@ -3,6 +3,7 @@ package com.dadada.onecloset.domain.fitting.service;
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
 import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
+import com.dadada.onecloset.domain.fitting.dto.FittingModelRegistDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
@@ -50,27 +51,32 @@ public class FittingService {
     private final FittingClothesRepository fittingClothesRepository;
 
     private final S3Service s3Service;
-    private final EntityManager entityManager;
 
     @Transactional
-    public CommonResponse registFittingModel(MultipartFile multipartFile, Long userId) throws IOException {
+    public FittingModelRegistDataDto registFittingModel(MultipartFile multipartFile, Long userId) throws IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         String url = s3Service.upload(multipartFile);
 
-        System.out.println("사진 업로드");
         FittingModel fittingModel = FittingModel.builder()
                 .user(user)
                 .originImg(url)
                 .build();
-        FittingModel fittingModelSave = fittingModelRepository.save(fittingModel);
-        entityManager.flush();
 
-        System.out.println("모델 저장");
+        FittingModel saveFittingModel = fittingModelRepository.save(fittingModel);
 
-        FastApiModelRegistResponseDto responseDto = fastApiService.registFittingModel(url);
-        fittingModelSave.updateInfo(responseDto);
+        return FittingModelRegistDataDto
+                .builder()
+                .fittingModel(saveFittingModel)
+                .url(url)
+                .build();
+    }
 
+    @Transactional
+    public CommonResponse getModelInfoAndUpdateFittingModel(FittingModelRegistDataDto registDataDto){
+        FastApiModelRegistResponseDto responseDto = fastApiService.registFittingModel(registDataDto.getUrl());
+        FittingModel fittingModel = registDataDto.getFittingModel();
+        fittingModel.updateInfo(responseDto);
         return new CommonResponse(200, "모델이 등록되었습니다.");
     }
 
