@@ -4,6 +4,7 @@ import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.global.DataResponse;
+import com.dadada.onecloset.global.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,7 @@ import java.util.Objects;
 public class FastApiService {
 
     private final RestTemplate restTemplate;
+    private final S3Service s3Service;
 
     @Value("${AI_SERVER}")
     private String AI_SERVER;
@@ -61,10 +63,18 @@ public class FastApiService {
         return jsonElement.getAsJsonObject().get("url").getAsString();
     }
 
-    // 가상피팅 모델 등록
+    // 가상피팅 모델 등록(파일 보내는게 아닌 S3에 업로드후 url을 )
     public FastApiModelRegistResponseDto registFittingModel(MultipartFile file) throws IOException {
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = makeHttpEntity(file);
-        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/fitting/preprocess", HttpMethod.POST, requestEntity, String.class);
+        String url = s3Service.upload(file);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("image", url);
+
+        HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/fitting/preprocess", HttpMethod.POST, request, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
         return FastApiModelRegistResponseDto.of(jsonElement);
     }
@@ -76,9 +86,9 @@ public class FastApiService {
 
         HttpEntity<String> request = getHttpEntity(headers, fittingCheckDataDtoList);
 
-        RestTemplate rt = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
-        String personResultAsJsonStr = rt.postForObject("http://127.0.0.1:8000/fast/fitting/", request, String.class);
+        String personResultAsJsonStr = restTemplate.postForObject(AI_SERVER + "/fast/fitting/", request, String.class);
         JsonNode jsonNode = objectMapper.readTree(personResultAsJsonStr);
 
         // Fast API에서 출력시키기
