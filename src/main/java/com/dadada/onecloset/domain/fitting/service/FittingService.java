@@ -11,6 +11,7 @@ import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
 import com.dadada.onecloset.domain.fitting.entity.Fitting;
+import com.dadada.onecloset.domain.fitting.entity.FittingClothes;
 import com.dadada.onecloset.domain.fitting.entity.FittingModel;
 import com.dadada.onecloset.domain.fitting.repository.FittingClothesRepository;
 import com.dadada.onecloset.domain.fitting.repository.FittingModelRepository;
@@ -82,7 +83,7 @@ public class FittingService {
     }
 
     public DataResponse<FittingResultResponseDto> fitting(FittingRequestDto requestDto, Long userId) throws JsonProcessingException {
-        // 피팅 가능한 조합인지 확인
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         FittingModel fittingModel = fittingModelRepository.findByIdAndUserWhereStatusIsTrue(requestDto.getModelId(), user)
@@ -92,11 +93,15 @@ public class FittingService {
         if (!checkDataDto.getCheck()) {
             return new DataResponse<>(400, "가상피팅 가능한 조합이 아닙니다.");
         }
-        // Fast API로 요청해서 피팅된 url 받기
-        FittingResultResponseDto responseDto = fastApiService.fitting(checkDataDto.getFittingRequestDtoList());
-        responseDto.setOriginImg(fittingModel.getOriginImg());
-        responseDto.setModelId(requestDto.getModelId());
-        responseDto.setClothesInfoList(checkDataDto.getFittingRequestDtoList());
+
+        String fittingImg = fastApiService.fitting(checkDataDto.getFittingRequestDtoList());
+        FittingResultResponseDto responseDto = FittingResultResponseDto
+                .builder()
+                .originImg(fittingModel.getOriginImg())
+                .fittingImg(fittingImg)
+                .modelId(requestDto.getModelId())
+                .clothesInfoList(checkDataDto.getFittingRequestDtoList())
+                .build();
         return new DataResponse<>(200, "가상피팅 완료", responseDto);
     }
 
@@ -104,7 +109,7 @@ public class FittingService {
     public DataResponse<Long> saveFitting(FittingSaveRequestDto requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        FittingModel fittingModel = fittingModelRepository.findById(requestDto.getModelId())
+        FittingModel fittingModel = fittingModelRepository.findByIdAndUserWhereStatusIsTrue(requestDto.getModelId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
 
         Fitting fitting = Fitting
@@ -117,23 +122,66 @@ public class FittingService {
 
         Fitting fittingSave = fittingRepository.save(fitting);
 
+        for (Long clothesId : requestDto.getClothesIdList()) {
+            Clothes clothes = clothesRepository.findByIdAndUser(clothesId, user)
+                    .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+            FittingClothes fittingClothes = FittingClothes.builder()
+                    .clothes(clothes)
+                    .fitting(fittingSave)
+                    .build();
+            fittingClothesRepository.save(fittingClothes);
+        }
+
+
+
         return new DataResponse<>(200, "가상피팅 저장완료", fittingSave.getId());
     }
 
-    // 가상피팅 날짜 수정
     @Transactional
     public CommonResponse changeWearingAt(FittingDateUpdateRequestDto requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Fitting fitting = fittingRepository.findByIdAndUser(requestDto.getClothesId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.FITTING_NOT_FOUND));
-        String wearingAtMonth = requestDto.getWearingAt();
-        fitting.editWearingAt(wearingAtMonth, wearingAtMonth.substring(0, 7));
+        String wearingAtDay = requestDto.getWearingAt();
+        fitting.editWearingAt(wearingAtDay.substring(0, 7), wearingAtDay);
         return new CommonResponse(200, "날짜 등록/수정 성공");
     }
 
     public DataResponse<List<FittingListResponseDto>> getFittingList(Long userId) {
-        return new DataResponse<>(200, "가상피팅 목록조회");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        List<Fitting> fittingList = fittingRepository.findByUser(user);
+        List<FittingListResponseDto> responseDtoList = new ArrayList<>();
+
+        for (Fitting fitting : fittingList) {
+            responseDtoList.add(FittingListResponseDto.of(fitting));
+        }
+
+        return new DataResponse<>(200, "가상피팅 목록/상세 조회", responseDtoList);
+    }
+
+    @Transactional
+    public CommonResponse deleteFitting(Long fittingId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Fitting fitting = fittingRepository.findByIdAndUser(fittingId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.FITTING_NOT_FOUND));
+        fittingRepository.delete(fitting);
+        return new CommonResponse(200, "의류 삭제 완료");
+    }
+
+    public DataResponse<List<FittingListResponseDto>> getFittingListByMonth(String date, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        List<Fitting> fittingList = fittingRepository.findByWearingAtMonth(date);
+        List<FittingListResponseDto> responseDtoList = new ArrayList<>();
+
+        for (Fitting fitting : fittingList) {
+            responseDtoList.add(FittingListResponseDto.of(fitting));
+        }
+
+        return new DataResponse<>(200, "가상피팅 월별 조회", responseDtoList);
     }
 
     public FittingCheckDataDto checkFitting(FittingRequestDto requestDto, User user) {
@@ -174,16 +222,6 @@ public class FittingService {
                 .fittingRequestDtoList(requestDtoList)
                 .build();
 
-    }
-
-    @Transactional
-    public CommonResponse deleteFitting(Long fittingId, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        Fitting fitting = fittingRepository.findByIdAndUser(fittingId, user)
-                .orElseThrow(() -> new CustomException(ExceptionType.FITTING_NOT_FOUND));
-        fittingRepository.delete(fitting);
-        return new CommonResponse(200, "의류 삭제 완료");
     }
 
 }

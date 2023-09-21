@@ -74,5 +74,11 @@ public class FittingController {
         return fittingService.getFittingList(userId);
     }
 
+    @GetMapping("/list/month/{date}")
+    public DataResponse<List<FittingListResponseDto>> getFittingListByMonth(Principal principal, @PathVariable("date") String date) {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.getFittingListByMonth(date, userId);
+    }
+
 
 }

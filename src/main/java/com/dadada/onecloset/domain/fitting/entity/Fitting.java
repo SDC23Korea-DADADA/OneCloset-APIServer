@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Fitting extends BaseTimeEntity {
 
