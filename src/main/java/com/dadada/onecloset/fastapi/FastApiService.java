@@ -63,7 +63,7 @@ public class FastApiService {
         return jsonElement.getAsJsonObject().get("url").getAsString();
     }
 
-    // 가상피팅 모델 등록(파일 보내는게 아닌 S3에 업로드후 url을 )
+    // 가상피팅 모델 등록
     public FastApiModelRegistResponseDto registFittingModel(MultipartFile file) throws IOException {
         String url = s3Service.upload(file);
 
@@ -79,8 +79,7 @@ public class FastApiService {
         return FastApiModelRegistResponseDto.of(jsonElement);
     }
 
-    // 가상피팅 진행
-    public FittingResultResponseDto fitting(List<FastApiFittingRequestDto> fittingCheckDataDtoList) throws JsonProcessingException {
+    public String fitting(List<FastApiFittingRequestDto> fittingCheckDataDtoList) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -88,14 +87,10 @@ public class FastApiService {
 
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
-        String personResultAsJsonStr = restTemplate.postForObject(AI_SERVER + "/fast/fitting/", request, String.class);
+        String personResultAsJsonStr = restTemplate.postForObject(AI_SERVER + "/fitting/", request, String.class);
         JsonNode jsonNode = objectMapper.readTree(personResultAsJsonStr);
 
-        // Fast API에서 출력시키기
-        FittingResultResponseDto responseDto = new FittingResultResponseDto();
-        responseDto.setOriginImg("https://fitsta-bucket.s3.ap-northeast-2.amazonaws.com/6ceee621-1dd4-4d4a-aec6-31a7b204d98f-images.jpg");
-        responseDto.setFittingImg(jsonNode.path("image").asText());
-        return responseDto;
+        return jsonNode.path("image").asText();
 
     }
 
