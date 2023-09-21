@@ -101,7 +101,7 @@ public class FittingService {
         return new CommonResponse(200, "모델 삭제 성공");
     }
 
-    @Transactional
+//    @Transactional
     public DataResponse<FittingResultResponseDto> fitting(FittingRequestDto requestDto, Long userId) throws JsonProcessingException {
 
         User user = userRepository.findById(userId)
@@ -124,15 +124,15 @@ public class FittingService {
                 .clothesInfoList(checkDataDto.getFittingRequestDtoList())
                 .build();
 
-        Fitting fitting = Fitting
-                .builder()
-                .user(user)
-                .fittingModel(fittingModel)
-                .fittingImg(fittingImg)
-                .fittingThumnailImg(fittingImg)
-                .build();
-
-        fittingRepository.save(fitting);
+//        Fitting fitting = Fitting
+//                .builder()
+//                .user(user)
+//                .fittingModel(fittingModel)
+//                .fittingImg(fittingImg)
+//                .fittingThumnailImg(fittingImg)
+//                .build();
+//
+//        fittingRepository.save(fitting);
 
         return new DataResponse<>(200, "가상피팅 완료", responseDto);
     }
