@@ -9,8 +9,7 @@ import lombok.*;
 @Builder
 @ToString
 public class FastApiModelRegistResponseDto {
-
-    private String originImg;
+    
     private String labelMap;
     private String skeleton;
     private String keypoint;
@@ -20,7 +19,6 @@ public class FastApiModelRegistResponseDto {
     public static FastApiModelRegistResponseDto of(JsonElement jsonElement) {
         return FastApiModelRegistResponseDto
                 .builder()
-                .originImg(jsonElement.getAsJsonObject().get("originImg").getAsString())
                 .labelMap(jsonElement.getAsJsonObject().get("labelMap").getAsString())
                 .skeleton(jsonElement.getAsJsonObject().get("skeleton").getAsString())
                 .keypoint(jsonElement.getAsJsonObject().get("keypoint").getAsString())

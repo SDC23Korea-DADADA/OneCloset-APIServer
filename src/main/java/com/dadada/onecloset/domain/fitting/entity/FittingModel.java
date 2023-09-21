@@ -31,15 +31,18 @@ public class FittingModel extends BaseTimeEntity {
     private Boolean status;
 
     @Builder
-    FittingModel(User user, FastApiModelRegistResponseDto responseDto) {
+    FittingModel(User user, FastApiModelRegistResponseDto responseDto, String originImg) {
         this.user = user;
-        this.originImg = responseDto.getOriginImg();
+        this.originImg = originImg;
+        this.status = true;
+    }
+
+    public void updateInfo(FastApiModelRegistResponseDto responseDto) {
         this.labelMap = responseDto.getLabelMap();
         this.skeleton = responseDto.getSkeleton();
         this.keypoint = responseDto.getKeypoint();
         this.dense = responseDto.getDense();
         this.denseNpz = responseDto.getDenseNpz();
-        this.status = true;
     }
 
     public void deleteModel() {
