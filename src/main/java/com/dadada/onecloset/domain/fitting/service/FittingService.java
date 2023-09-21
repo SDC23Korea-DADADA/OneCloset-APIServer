@@ -114,6 +114,7 @@ public class FittingService {
         }
 
         String fittingImg = fastApiService.fitting(checkDataDto.getFittingRequestDtoList(), fittingModel);
+
         FittingResultResponseDto responseDto = FittingResultResponseDto
                 .builder()
                 .originImg(fittingModel.getOriginImg())
@@ -121,6 +122,17 @@ public class FittingService {
                 .modelId(requestDto.getModelId())
                 .clothesInfoList(checkDataDto.getFittingRequestDtoList())
                 .build();
+
+        Fitting fitting = Fitting
+                .builder()
+                .user(user)
+                .fittingModel(fittingModel)
+                .fittingImg(fittingImg)
+                .fittingThumnailImg(fittingImg)
+                .build();
+
+        fittingRepository.save(fitting);
+
         return new DataResponse<>(200, "가상피팅 완료", responseDto);
     }
 
