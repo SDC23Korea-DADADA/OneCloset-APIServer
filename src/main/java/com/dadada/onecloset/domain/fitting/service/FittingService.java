@@ -101,6 +101,7 @@ public class FittingService {
         return new CommonResponse(200, "모델 삭제 성공");
     }
 
+    @Transactional
     public DataResponse<FittingResultResponseDto> fitting(FittingRequestDto requestDto, Long userId) throws JsonProcessingException {
 
         User user = userRepository.findById(userId)
