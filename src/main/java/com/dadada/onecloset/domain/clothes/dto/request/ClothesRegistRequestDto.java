@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 public class ClothesRegistRequestDto {
 
-    private MultipartFile image;
+    private String image;
     private String type;
     private String colorCode;
     private String material;

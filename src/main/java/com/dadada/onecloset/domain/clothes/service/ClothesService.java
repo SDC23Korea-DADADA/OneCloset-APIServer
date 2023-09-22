@@ -35,6 +35,7 @@ import com.dadada.onecloset.global.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -64,10 +65,8 @@ public class ClothesService {
     private final FastApiService fastApiService;
 
     @Transactional
-    public DataResponse<Long> registClothes(ClothesRegistRequestDto requestDto, Long userId) throws Exception {
+    public DataResponse<Long> registClothes(ClothesRegistRequestDto requestDto, Long userId) {
 
-        // thumnail 이미지는 아직 구현 안함
-        String originImgUrl = s3Service.upload(requestDto.getImage());
         User user = userRepository.findByIdWhereStatusIsTrue(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Color color = colorRepository.findByCode(requestDto.getColorCode())
@@ -79,8 +78,8 @@ public class ClothesService {
 
         Clothes clothes = Clothes
                 .builder()
-                .originImg(originImgUrl)
-                .thumnailImg(originImgUrl)
+                .originImg(requestDto.getImage())
+                .thumnailImg(requestDto.getImage())
                 .description(requestDto.getDescription())
                 .user(user)
                 .color(color)
@@ -188,8 +187,8 @@ public class ClothesService {
     }
 
     @Transactional
-    public CommonResponse updateClothes(ClothesUpdateRequestDto requestDto, Long userId) throws IOException {
-        // thumnail 이미지는 아직 구현 안함
+    public CommonResponse updateClothes(ClothesUpdateRequestDto requestDto, Long userId) {
+
         User user = userRepository.findByIdWhereStatusIsTrue(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         Clothes clothes = clothesRepository.findByIdAndUserWhereIsRegistIsTrue(requestDto.getClothesId(), user)
@@ -200,11 +199,6 @@ public class ClothesService {
                 .orElseThrow(() -> new CustomException(ExceptionType.TYPE_NOT_FOUND));
         Material material = materialRepository.findByMaterialName(requestDto.getMaterial())
                 .orElseThrow(() -> new CustomException(ExceptionType.MATERIAL_NOT_FOUND));
-
-        if (!requestDto.getImage().isEmpty()) {
-            String originImgUrl = s3Service.upload(requestDto.getImage());
-            clothes.updateUrl(originImgUrl, originImgUrl);
-        }
 
         clothes.updateClothes(requestDto.getDescription(), color, type, material);
 

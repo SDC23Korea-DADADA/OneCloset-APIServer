@@ -11,7 +11,6 @@ import java.util.List;
 public class ClothesUpdateRequestDto {
 
     private Long clothesId;
-    private MultipartFile image;
     private String type;
     private String colorCode;
     private String material;

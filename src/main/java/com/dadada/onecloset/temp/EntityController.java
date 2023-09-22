@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -47,6 +48,11 @@ public class EntityController {
             list.add(responseDto);
         }
         return list;
+    }
+
+    @GetMapping("/tpo")
+    public List<String> getTpoList() {
+        return Arrays.asList(new String[]{"데일리", "직장", "데이트", "경조사", "여행", "홈웨어", "파티", "운동", "학교", "기타"});
     }
 
 
