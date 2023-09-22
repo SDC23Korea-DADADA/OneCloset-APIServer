@@ -37,7 +37,7 @@ public class ClothesController {
     }
 
     @PostMapping
-    public DataResponse<Long> registClothes(Principal principal, @ModelAttribute ClothesRegistRequestDto requestDto) throws Exception {
+    public DataResponse<Long> registClothes(Principal principal, @RequestBody ClothesRegistRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
         return clothesService.registClothes(requestDto, userId);
     }
@@ -75,7 +75,7 @@ public class ClothesController {
     }
 
     @PutMapping
-    public CommonResponse updateClothes(Principal principal, @ModelAttribute ClothesUpdateRequestDto requestDto) throws IOException {
+    public CommonResponse updateClothes(Principal principal, @RequestBody ClothesUpdateRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
         return clothesService.updateClothes(requestDto, userId);
     }
