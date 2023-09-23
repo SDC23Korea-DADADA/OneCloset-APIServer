@@ -2,11 +2,15 @@ package com.dadada.onecloset.domain.fitting.service;
 
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
+import com.dadada.onecloset.domain.codi.dto.response.CodiListResponseDto;
+import com.dadada.onecloset.domain.codi.entity.Codi;
+import com.dadada.onecloset.domain.codi.repository.CodiRepository;
 import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
 import com.dadada.onecloset.domain.fitting.dto.FittingModelRegistDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
+import com.dadada.onecloset.domain.fitting.dto.response.FittingAndCodiResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
@@ -27,7 +31,6 @@ import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
 import com.dadada.onecloset.global.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +52,8 @@ public class FittingService {
     private final FittingRepository fittingRepository;
     private final FittingModelRepository fittingModelRepository;
     private final FittingClothesRepository fittingClothesRepository;
+
+    private final CodiRepository codiRepository;
 
     private final S3Service s3Service;
 
@@ -168,19 +173,6 @@ public class FittingService {
         return new CommonResponse(200, "날짜 등록/수정 성공");
     }
 
-    public DataResponse<List<FittingListResponseDto>> getFittingList(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        List<Fitting> fittingList = fittingRepository.findByUser(user);
-        List<FittingListResponseDto> responseDtoList = new ArrayList<>();
-
-        for (Fitting fitting : fittingList) {
-            responseDtoList.add(FittingListResponseDto.of(fitting));
-        }
-
-        return new DataResponse<>(200, "가상피팅 목록/상세 조회", responseDtoList);
-    }
-
     @Transactional
     public CommonResponse deleteFitting(Long fittingId, Long userId) {
         User user = userRepository.findById(userId)
@@ -191,17 +183,27 @@ public class FittingService {
         return new CommonResponse(200, "의류 삭제 완료");
     }
 
-    public DataResponse<List<FittingListResponseDto>> getFittingListByMonth(String date, Long userId) {
+    public DataResponse<FittingAndCodiResponseDto> getFittingAndCodiListByMonth(String date, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         List<Fitting> fittingList = fittingRepository.findByWearingAtMonthAndUser(date, user);
-        List<FittingListResponseDto> responseDtoList = new ArrayList<>();
+        List<Codi> codiList = codiRepository.findByWearingAtMonthAndUser(date, user);
 
-        for (Fitting fitting : fittingList) {
-            responseDtoList.add(FittingListResponseDto.of(fitting));
-        }
+        FittingAndCodiResponseDto responseDto = getFittingAndCodiResponseDto(fittingList, codiList);
 
-        return new DataResponse<>(200, "가상피팅 월별 조회", responseDtoList);
+        return new DataResponse<>(200, "가상피팅/코디 전체 조회", responseDto);
+    }
+
+    public DataResponse<FittingAndCodiResponseDto> getFittingAndCodiList(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+
+        List<Fitting> fittingList = fittingRepository.findByUser(user);
+        List<Codi> codiList = codiRepository.findByUser(user);
+
+        FittingAndCodiResponseDto responseDto = getFittingAndCodiResponseDto(fittingList, codiList);
+
+        return new DataResponse<>(200, "가상피팅/코디 월별 조회", responseDto);
     }
 
     public FittingCheckDataDto checkFitting(FittingRequestDto requestDto, User user) {
@@ -242,6 +244,25 @@ public class FittingService {
                 .fittingRequestDtoList(requestDtoList)
                 .build();
 
+    }
+
+    public FittingAndCodiResponseDto getFittingAndCodiResponseDto(List<Fitting> fittingList, List<Codi> codiList) {
+
+        List<FittingListResponseDto> fittingListResponseDtoList = new ArrayList<>();
+        List<CodiListResponseDto> codiListResponseDtoList = new ArrayList<>();
+
+        for (Fitting fitting: fittingList) {
+            fittingListResponseDtoList.add(FittingListResponseDto.of(fitting));
+        }
+        for (Codi codi: codiList) {
+            codiListResponseDtoList.add(CodiListResponseDto.of(codi));
+        }
+
+        return FittingAndCodiResponseDto
+                .builder()
+                .fittingList(fittingListResponseDtoList)
+                .codiList(codiListResponseDtoList)
+                .build();
     }
 
 }
