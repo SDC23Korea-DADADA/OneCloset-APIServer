@@ -23,7 +23,7 @@ public class ClothesDetailResponseDto {
 
     private Long clothesId;
 
-    private String img;
+    private String image;
 
     private String color;
     private String colorCode;
@@ -74,7 +74,7 @@ public class ClothesDetailResponseDto {
         return ClothesDetailResponseDto
                 .builder()
                 .clothesId(clothes.getId())
-                .img(clothes.getOriginImg())
+                .image(clothes.getOriginImg())
                 .color(clothes.getColor().getColorName())
                 .colorCode(clothes.getColor().getCode())
                 .upperType(clothes.getType().getUpperTypeCode().getUpperTypeName())

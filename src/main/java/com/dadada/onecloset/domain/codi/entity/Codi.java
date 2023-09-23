@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,9 +22,8 @@ public class Codi {
 
     private String thumnailImg;
 
-    private String description;
-
-    private LocalDateTime wearingAt;
+    private String wearingAtMonth;
+    private String wearingAtDay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -35,20 +33,17 @@ public class Codi {
     private List<CodiClothes> codiClothesList;
 
     @Builder
-    public Codi(String originImg, String thumnailImg, String description, LocalDateTime wearingAt, User user) {
+    public Codi(String originImg, String thumnailImg, String wearingAtMonth, String wearingAtDay, User user) {
         this.originImg = originImg;
         this.thumnailImg = thumnailImg;
-        this.description = description;
-        this.wearingAt = wearingAt;
+        this.wearingAtMonth = wearingAtMonth;
+        this.wearingAtDay = wearingAtDay;
         this.user = user;
     }
 
-    public void editDescription(String description) {
-        this.description = description;
-    }
-
-    public void editWearingAt(LocalDateTime wearingAt) {
-        this.wearingAt = wearingAt;
+    public void editWearingAt(String wearingAtMonth, String wearingAtDay) {
+        this.wearingAtMonth = wearingAtMonth;
+        this.wearingAtDay = wearingAtDay;
     }
 
 }
