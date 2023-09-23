@@ -2,6 +2,7 @@ package com.dadada.onecloset.domain.codi.service;
 
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
+import com.dadada.onecloset.domain.codi.dto.request.CodiDateUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.dto.request.CodiRegistRequestDto;
 import com.dadada.onecloset.domain.codi.dto.request.CodiUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.dto.response.CodiAndFittingDetailResponseDto;
@@ -68,18 +69,24 @@ public class CodiService {
     }
 
     @Transactional
-    public CommonResponse editCode(CodiUpdateRequestDto requestDto, Long userId) {
-        return new CommonResponse(200, "코디 수정 성공");
+    public CommonResponse editCodiWearingAt(CodiDateUpdateRequestDto requestDto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        Codi codi = codiRepository.findByIdAndUser(requestDto.getCodiId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CODI_NOT_FOUND));
+        String wearingAtDay = requestDto.getWearingAt();
+        codi.editWearingAt(wearingAtDay.substring(0, 7), wearingAtDay);
+        return new CommonResponse(200, "코디 날짜 수정 성공");
     }
 
     @Transactional
     public CommonResponse deleteCode(Long codiId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-
+        Codi codi = codiRepository.findByIdAndUser(codiId, user)
+                .orElseThrow(() -> new CustomException(ExceptionType.CODI_NOT_FOUND));
+        codiRepository.delete(codi);
         return new CommonResponse(200, "코디 삭제 성공");
     }
-
-
 
 }
