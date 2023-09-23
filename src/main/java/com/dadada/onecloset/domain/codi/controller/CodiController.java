@@ -1,7 +1,7 @@
 package com.dadada.onecloset.domain.codi.controller;
 
+import com.dadada.onecloset.domain.codi.dto.request.CodiDateUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.dto.request.CodiRegistRequestDto;
-import com.dadada.onecloset.domain.codi.dto.request.CodiUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.service.CodiService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -24,10 +24,10 @@ public class CodiController {
         return codiService.registCodi(requestDto, userId);
     }
 
-    @PutMapping
-    public CommonResponse editCode(Principal principal, @ModelAttribute CodiUpdateRequestDto requestDto) {
+    @PutMapping("/date")
+    public CommonResponse editCodiWearingAt(Principal principal, @RequestBody CodiDateUpdateRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
-        return codiService.editCode(requestDto, userId);
+        return codiService.editCodiWearingAt(requestDto, userId);
     }
 
     @DeleteMapping("/{id}")

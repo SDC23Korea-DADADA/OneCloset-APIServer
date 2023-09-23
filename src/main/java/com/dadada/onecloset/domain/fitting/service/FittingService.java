@@ -154,8 +154,6 @@ public class FittingService {
             fittingClothesRepository.save(fittingClothes);
         }
 
-
-
         return new DataResponse<>(200, "가상피팅 저장완료", fittingSave.getId());
     }
 
@@ -196,7 +194,7 @@ public class FittingService {
     public DataResponse<List<FittingListResponseDto>> getFittingListByMonth(String date, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        List<Fitting> fittingList = fittingRepository.findByWearingAtMonth(date);
+        List<Fitting> fittingList = fittingRepository.findByWearingAtMonthAndUser(date, user);
         List<FittingListResponseDto> responseDtoList = new ArrayList<>();
 
         for (Fitting fitting : fittingList) {

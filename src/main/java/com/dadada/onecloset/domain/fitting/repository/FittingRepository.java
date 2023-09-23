@@ -13,6 +13,6 @@ public interface FittingRepository extends JpaRepository<Fitting, Long> {
 
     List<Fitting> findByUser(User user);
 
-    List<Fitting> findByWearingAtMonth(String month);
+    List<Fitting> findByWearingAtMonthAndUser(String month, User user);
 
 }
