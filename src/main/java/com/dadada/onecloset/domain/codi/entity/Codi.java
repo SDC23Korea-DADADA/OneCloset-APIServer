@@ -19,9 +19,7 @@ public class Codi {
     private Long id;
 
     private String originImg;
-
     private String thumnailImg;
-
     private String wearingAtMonth;
     private String wearingAtDay;
 
@@ -41,7 +39,12 @@ public class Codi {
         this.user = user;
     }
 
-    public void editWearingAt(String wearingAtMonth, String wearingAtDay) {
+    public void editImage(String originImg, String thumnailImg) {
+        this.originImg = originImg;
+        this.thumnailImg = thumnailImg;
+    }
+
+    public void editWearingAt(String wearingAtDay, String wearingAtMonth) {
         this.wearingAtMonth = wearingAtMonth;
         this.wearingAtDay = wearingAtDay;
     }
