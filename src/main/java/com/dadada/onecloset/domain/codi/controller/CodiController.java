@@ -2,6 +2,7 @@ package com.dadada.onecloset.domain.codi.controller;
 
 import com.dadada.onecloset.domain.codi.dto.request.CodiDateUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.dto.request.CodiRegistRequestDto;
+import com.dadada.onecloset.domain.codi.dto.request.CodiUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.service.CodiService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
@@ -22,6 +23,12 @@ public class CodiController {
     public DataResponse<Long> registCodi(Principal principal, @ModelAttribute CodiRegistRequestDto requestDto) throws IOException {
         Long userId = Long.parseLong(principal.getName());
         return codiService.registCodi(requestDto, userId);
+    }
+
+    @PutMapping
+    public CommonResponse editCodi(Principal principal, @ModelAttribute CodiUpdateRequestDto requestDto) throws IOException {
+        Long userId = Long.parseLong(principal.getName());
+        return codiService.editCodi(requestDto, userId);
     }
 
     @PutMapping("/date")
