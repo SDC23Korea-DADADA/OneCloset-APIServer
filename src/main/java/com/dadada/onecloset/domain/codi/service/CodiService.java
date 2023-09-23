@@ -4,9 +4,6 @@ import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
 import com.dadada.onecloset.domain.codi.dto.request.CodiDateUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.dto.request.CodiRegistRequestDto;
-import com.dadada.onecloset.domain.codi.dto.request.CodiUpdateRequestDto;
-import com.dadada.onecloset.domain.codi.dto.response.CodiAndFittingDetailResponseDto;
-import com.dadada.onecloset.domain.codi.dto.response.CodiAndFittingListResponseDto;
 import com.dadada.onecloset.domain.codi.entity.Codi;
 import com.dadada.onecloset.domain.codi.entity.CodiClothes;
 import com.dadada.onecloset.domain.codi.repository.CodiClothesRepository;
@@ -18,13 +15,12 @@ import com.dadada.onecloset.exception.ExceptionType;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
 import com.dadada.onecloset.global.S3Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +38,11 @@ public class CodiService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         String url = s3Service.upload(requestDto.getImage());
-        String wearingAtDay = requestDto.getDate();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        CodiRegistRequestDto.CodiInfoDto codiInfo = objectMapper.readValue(requestDto.getInfo(), CodiRegistRequestDto.CodiInfoDto.class);
+
+        String wearingAtDay = codiInfo.getDate();
 
         Codi codi = Codi
                 .builder()
@@ -54,7 +54,7 @@ public class CodiService {
                 .build();
         Codi codiSave = codiRepository.save(codi);
 
-        for (Long clothesId: requestDto.getClothesList()) {
+        for (Long clothesId: codiInfo.getClothesList()) {
             Clothes clothes = clothesRepository.findByIdAndUser(clothesId, user)
                     .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
             CodiClothes codiClothes = CodiClothes

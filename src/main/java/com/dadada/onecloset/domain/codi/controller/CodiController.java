@@ -2,7 +2,6 @@ package com.dadada.onecloset.domain.codi.controller;
 
 import com.dadada.onecloset.domain.codi.dto.request.CodiDateUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.dto.request.CodiRegistRequestDto;
-import com.dadada.onecloset.domain.codi.dto.request.CodiUpdateRequestDto;
 import com.dadada.onecloset.domain.codi.service.CodiService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
