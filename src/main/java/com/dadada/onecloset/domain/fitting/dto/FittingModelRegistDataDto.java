@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FittingModelRegistDataDto {
 
-    FittingModel fittingModel;
-    String url;
+    private FittingModel fittingModel;
+    private String url;
 
     @Builder
     public FittingModelRegistDataDto(FittingModel fittingModel, String url) {

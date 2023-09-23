@@ -1,6 +1,6 @@
 package com.dadada.onecloset.domain.fitting.dto.response;
 
-import com.dadada.onecloset.domain.clothes.entity.Clothes;
+import com.dadada.onecloset.domain.fitting.dto.FittingAndCodiListDetailDto;
 import com.dadada.onecloset.domain.fitting.entity.Fitting;
 import com.dadada.onecloset.domain.fitting.entity.FittingClothes;
 import lombok.AllArgsConstructor;
@@ -23,15 +23,15 @@ public class FittingListResponseDto {
     private String fittingThumbnailImg;
     private String wearingAtMonth;
     private String wearingAtDay;
-    private List<FittingListDetailResponseDto> clothesList;
+    private List<FittingAndCodiListDetailDto> clothesList;
 
     public static FittingListResponseDto of(Fitting fitting) {
 
         List<FittingClothes> fittingClothesList = fitting.getFittingClothesList();
-        List<FittingListDetailResponseDto> fittingListDetailResponseDtoList = new ArrayList<>();
+        List<FittingAndCodiListDetailDto> fittingAndCodiListDetailDtoList = new ArrayList<>();
 
         for (FittingClothes fittingClothes : fittingClothesList) {
-            fittingListDetailResponseDtoList.add(FittingListDetailResponseDto.of(fittingClothes.getClothes()));
+            fittingAndCodiListDetailDtoList.add(FittingAndCodiListDetailDto.of(fittingClothes.getClothes()));
         }
 
         return FittingListResponseDto
@@ -42,7 +42,7 @@ public class FittingListResponseDto {
                 .fittingThumbnailImg(fitting.getFittingThumnailImg())
                 .wearingAtMonth(fitting.getWearingAtMonth())
                 .wearingAtDay(fitting.getWearingAtDay())
-                .clothesList(fittingListDetailResponseDtoList)
+                .clothesList(fittingAndCodiListDetailDtoList)
                 .build();
 
     }

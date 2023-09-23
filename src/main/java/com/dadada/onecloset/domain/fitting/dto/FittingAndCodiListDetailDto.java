@@ -1,4 +1,4 @@
-package com.dadada.onecloset.domain.fitting.dto.response;
+package com.dadada.onecloset.domain.fitting.dto;
 
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import lombok.AllArgsConstructor;
@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FittingListDetailResponseDto {
+public class FittingAndCodiListDetailDto {
 
     private Long clothesId;
     private String thumbnailImg;
 
-    public static FittingListDetailResponseDto of(Clothes clothes) {
+    public static FittingAndCodiListDetailDto of(Clothes clothes) {
 
-        return FittingListDetailResponseDto
+        return FittingAndCodiListDetailDto
                 .builder()
                 .clothesId(clothes.getId())
                 .thumbnailImg(clothes.getThumnailImg())

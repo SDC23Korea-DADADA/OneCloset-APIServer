@@ -4,6 +4,7 @@ import com.dadada.onecloset.domain.fitting.dto.FittingModelRegistDataDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingSaveRequestDto;
 import com.dadada.onecloset.domain.fitting.dto.request.FittingDateUpdateRequestDto;
+import com.dadada.onecloset.domain.fitting.dto.response.FittingAndCodiResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingListResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.dto.response.ModelListResponseDto;
@@ -71,15 +72,15 @@ public class FittingController {
     }
 
     @GetMapping("/list")
-    public DataResponse<List<FittingListResponseDto>> getFittingList(Principal principal) {
+    public DataResponse<FittingAndCodiResponseDto> getFittingAndCodiList(Principal principal) {
         Long userId = Long.parseLong(principal.getName());
-        return fittingService.getFittingList(userId);
+        return fittingService.getFittingAndCodiList(userId);
     }
 
     @GetMapping("/list/month/{date}")
-    public DataResponse<List<FittingListResponseDto>> getFittingListByMonth(Principal principal, @PathVariable("date") String date) {
+    public DataResponse<FittingAndCodiResponseDto> getFittingAndCodiListByMonth(Principal principal, @PathVariable("date") String date) {
         Long userId = Long.parseLong(principal.getName());
-        return fittingService.getFittingListByMonth(date, userId);
+        return fittingService.getFittingAndCodiListByMonth(date, userId);
     }
 
 
