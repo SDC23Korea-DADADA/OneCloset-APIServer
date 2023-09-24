@@ -166,7 +166,7 @@ public class FittingService {
     public CommonResponse changeWearingAt(FittingDateUpdateRequestDto requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
-        Fitting fitting = fittingRepository.findByIdAndUser(requestDto.getClothesId(), user)
+        Fitting fitting = fittingRepository.findByIdAndUser(requestDto.getFittingId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.FITTING_NOT_FOUND));
         String wearingAtDay = requestDto.getWearingAt();
         fitting.editWearingAt(wearingAtDay.substring(0, 7), wearingAtDay);

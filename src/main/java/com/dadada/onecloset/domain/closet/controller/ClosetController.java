@@ -24,7 +24,6 @@ public class ClosetController {
     @PostMapping
     public CommonResponse createCloset(Principal principal, @RequestBody ClosetCreateRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
-        System.out.println(requestDto);
         return closetService.createCloset(requestDto, userId);
     }
 
