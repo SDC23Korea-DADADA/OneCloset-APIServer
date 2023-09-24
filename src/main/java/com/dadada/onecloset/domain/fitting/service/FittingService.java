@@ -163,12 +163,11 @@ public class FittingService {
     }
 
     @Transactional
-    public DataResponse<Long> saveFittingAndTime(FittingSaveRequestDto requestDto, Long userId) {
+    public DataResponse<Long> saveFittingAndTime(FittingSaveRequestDto requestDto, String wearingAtDay, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         FittingModel fittingModel = fittingModelRepository.findByIdAndUserWhereStatusIsTrue(requestDto.getModelId(), user)
                 .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
-        String wearingAtDay = requestDto.getWearingAt();
 
         Fitting fitting = Fitting
                 .builder()
