@@ -37,10 +37,12 @@ public class Fitting extends BaseTimeEntity {
     private List<FittingClothes> fittingClothesList;
 
     @Builder
-    Fitting(FittingModel fittingModel, String fittingImg, String fittingThumnailImg, User user) {
+    Fitting(FittingModel fittingModel, String fittingImg, String fittingThumnailImg, String wearingAtDay, String wearingAtMonth, User user) {
         this.fittingModel = fittingModel;
         this.fittingImg = fittingImg;
         this.fittingThumnailImg = fittingThumnailImg;
+        this.wearingAtDay = wearingAtDay;
+        this.wearingAtMonth = wearingAtMonth;
         this.user = user;
     }
 
