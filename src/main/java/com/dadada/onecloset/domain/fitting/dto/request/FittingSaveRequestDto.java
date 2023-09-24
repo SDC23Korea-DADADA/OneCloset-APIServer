@@ -11,6 +11,5 @@ public class FittingSaveRequestDto {
     private Long modelId;
     private String fittingImg;
     private List<Long> clothesIdList;
-    private String wearingAt;
 
 }

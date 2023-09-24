@@ -65,10 +65,10 @@ public class FittingController {
         return fittingService.saveFitting(requestDto, userId);
     }
 
-    @PostMapping("/save/time")
-    public DataResponse<Long> saveFittingAndTime(Principal principal, @RequestBody FittingSaveRequestDto requestDto) {
+    @PostMapping("/save/{date}")
+    public DataResponse<Long> saveFittingAndTime(Principal principal, @PathVariable("date") String date, @RequestBody FittingSaveRequestDto requestDto) {
         Long userId = Long.parseLong(principal.getName());
-        return fittingService.saveFittingAndTime(requestDto, userId);
+        return fittingService.saveFittingAndTime(requestDto, date, userId);
     }
 
     @PostMapping("/time")
