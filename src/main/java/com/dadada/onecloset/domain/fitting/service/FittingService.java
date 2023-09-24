@@ -163,6 +163,39 @@ public class FittingService {
     }
 
     @Transactional
+    public DataResponse<Long> saveFittingAndTime(FittingSaveRequestDto requestDto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        FittingModel fittingModel = fittingModelRepository.findByIdAndUserWhereStatusIsTrue(requestDto.getModelId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
+        String wearingAtDay = requestDto.getWearingAt();
+
+        Fitting fitting = Fitting
+                .builder()
+                .fittingModel(fittingModel)
+                .fittingImg(requestDto.getFittingImg())
+                .fittingThumnailImg(requestDto.getFittingImg())
+                .wearingAtDay(wearingAtDay)
+                .wearingAtMonth(wearingAtDay.substring(0, 7))
+                .user(user)
+                .build();
+
+        Fitting fittingSave = fittingRepository.save(fitting);
+
+        for (Long clothesId : requestDto.getClothesIdList()) {
+            Clothes clothes = clothesRepository.findByIdAndUser(clothesId, user)
+                    .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+            FittingClothes fittingClothes = FittingClothes.builder()
+                    .clothes(clothes)
+                    .fitting(fittingSave)
+                    .build();
+            fittingClothesRepository.save(fittingClothes);
+        }
+
+        return new DataResponse<>(200, "가상피팅 저장완료", fittingSave.getId());
+    }
+
+    @Transactional
     public CommonResponse changeWearingAt(FittingDateUpdateRequestDto requestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
