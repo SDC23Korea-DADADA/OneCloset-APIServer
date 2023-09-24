@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class FittingDateUpdateRequestDto {
 
-    private Long clothesId;
+    private Long fittingId;
     private String wearingAt;
 
 }
