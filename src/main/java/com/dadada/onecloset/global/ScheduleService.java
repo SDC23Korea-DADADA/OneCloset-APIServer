@@ -40,6 +40,7 @@ public class ScheduleService {
     public void fineTuningAsync() {
         List<Clothes> clothesList = clothesRepository.findByIsUseData(false);
         JSONObject jsonObject = getJsonObject(clothesList);
+        log.info("fineTuningAsync");
         webClientUtil.post(TUNING_SERVER + "/additional/train", jsonObject, String.class)
                 .subscribe(
                         response -> {
@@ -53,8 +54,7 @@ public class ScheduleService {
                 );
     }
 
-
-    private final RestTemplate restTemplate;
+//    private final RestTemplate restTemplate;
 
 
 //    @Transactional
