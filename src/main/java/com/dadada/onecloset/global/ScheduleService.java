@@ -44,10 +44,15 @@ public class ScheduleService {
         webClientUtil.post(TUNING_SERVER + "/additional/train", jsonObject, String.class)
                 .subscribe(
                         response -> {
-                            log.info("get response");
+
+                            log.info("findTuning Response: {}", response);
                             for (Clothes clothes : clothesList) {
+                                System.out.println(clothes);
                                 clothes.useClothesData();
+                                clothesRepository.save(clothes);
                             }
+
+
                         },
                         error -> {
                             log.error(error.getMessage());
