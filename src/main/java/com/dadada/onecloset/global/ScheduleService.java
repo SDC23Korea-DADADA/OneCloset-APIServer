@@ -41,10 +41,10 @@ public class ScheduleService {
         List<Clothes> clothesList = clothesRepository.findByIsUseData(false);
         JSONObject jsonObject = getJsonObject(clothesList);
         log.info("fineTuningAsync");
-        System.out.println(jsonObject);
         webClientUtil.post(TUNING_SERVER + "/additional/train", jsonObject, String.class)
                 .subscribe(
                         response -> {
+                            log.info("get response");
                             for (Clothes clothes : clothesList) {
                                 clothes.useClothesData();
                             }
