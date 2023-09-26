@@ -19,4 +19,6 @@ public interface ClothesRepository extends JpaRepository<Clothes, Long> {
 
     Optional<Clothes> findByIdAndUser(Long id, User user);
 
+    List<Clothes> findByIsUseData(Boolean isUseData);
+
 }
