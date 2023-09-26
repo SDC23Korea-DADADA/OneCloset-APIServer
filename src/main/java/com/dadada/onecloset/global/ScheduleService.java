@@ -45,6 +45,7 @@ public class ScheduleService {
         webClientUtil.post(TUNING_SERVER + "/additional/train", jsonObject, String.class)
                 .subscribe(
                         response -> {
+                            log.info("get response");
                             for (Clothes clothes : clothesList) {
                                 clothes.useClothesData();
                             }
