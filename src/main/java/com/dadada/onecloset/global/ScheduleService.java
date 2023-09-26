@@ -86,6 +86,7 @@ public class ScheduleService {
         List<JSONObject> jsonObjectList = new ArrayList<>();
         for (Clothes clothes: clothesList) {
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("clothesId", clothes.getId().toString());
             jsonObject.put("url", clothes.getOriginImg());
             jsonObject.put("material", clothes.getMaterial().getMaterialName());
             jsonObject.put("type", clothes.getType().getTypeName());
