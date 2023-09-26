@@ -28,7 +28,7 @@ import java.util.Objects;
 @Transactional(readOnly = true)
 public class ScheduleService {
 
-    @Value("${AI_SERVER}")
+    @Value("${TUNING_SERVER}")
     private String TUNING_SERVER;
 
     private final ClothesRepository clothesRepository;
@@ -41,6 +41,7 @@ public class ScheduleService {
         List<Clothes> clothesList = clothesRepository.findByIsUseData(false);
         JSONObject jsonObject = getJsonObject(clothesList);
         log.info("fineTuningAsync");
+        System.out.println(jsonObject);
         webClientUtil.post(TUNING_SERVER + "/additional/train", jsonObject, String.class)
                 .subscribe(
                         response -> {
@@ -49,6 +50,7 @@ public class ScheduleService {
                             }
                         },
                         error -> {
+                            log.error(error.getMessage());
                             log.error("FINE TUNING ERR");
                         }
                 );
