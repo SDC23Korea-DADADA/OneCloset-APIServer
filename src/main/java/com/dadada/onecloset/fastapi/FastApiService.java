@@ -1,17 +1,14 @@
 package com.dadada.onecloset.fastapi;
 
-import com.dadada.onecloset.domain.fitting.dto.FittingCheckDataDto;
-import com.dadada.onecloset.domain.fitting.dto.request.FittingRequestDto;
-import com.dadada.onecloset.domain.fitting.dto.response.FittingResultResponseDto;
 import com.dadada.onecloset.domain.fitting.entity.FittingModel;
-import com.dadada.onecloset.global.DataResponse;
-import com.dadada.onecloset.global.S3Service;
+import com.dadada.onecloset.util.WebClientUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -23,18 +20,20 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FastApiService {
 
-    private final RestTemplate restTemplate;
-
     @Value("${AI_SERVER}")
     private String AI_SERVER;
+
+    private final RestTemplate restTemplate;
+    private final WebClientUtil webClientUtil;
+
 
     // 의류여부 판단
     public Boolean isClothes(MultipartFile file) throws IOException {
@@ -67,14 +66,31 @@ public class FastApiService {
     public FastApiModelRegistResponseDto registFittingModel(String url) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("image", url);
+
         HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
+
+        ///
+//        webClientUtil.post(AI_SERVER + "/fitting/preprocess", request, String.class)
+//                .subscribe(
+//                        response -> {
+//                            System.out.println(response);
+//
+//                        },
+//                        error -> {
+//                            log.error(error.getMessage());
+//                            log.error("registFittingModel ERR");
+//                        }
+//                );
+        ///
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/fitting/preprocess", HttpMethod.POST, request, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
         return FastApiModelRegistResponseDto.of(jsonElement);
     }
 
+    // 가상피팅 진행
     public String fitting(List<FastApiFittingRequestDto> fittingCheckDataDtoList, FittingModel fittingModel) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -90,7 +106,6 @@ public class FastApiService {
 
     }
 
-
     public HttpEntity<MultiValueMap<String, Object>> makeHttpEntity(MultipartFile file) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -105,7 +120,6 @@ public class FastApiService {
 
         return new HttpEntity<>(body, headers);
     }
-
 
     private static HttpEntity<String> getHttpEntity(HttpHeaders headers, List<FastApiFittingRequestDto> fittingCheckDataDtoList, FittingModel fittingModel) {
         JSONObject jsonObject = new JSONObject();
