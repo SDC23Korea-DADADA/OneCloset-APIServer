@@ -2,6 +2,7 @@ package com.dadada.onecloset.domain.fitting.service;
 
 import com.dadada.onecloset.domain.clothes.entity.Clothes;
 import com.dadada.onecloset.domain.clothes.repository.ClothesRepository;
+import com.dadada.onecloset.domain.codi.dto.request.CodiRegistRequestDto;
 import com.dadada.onecloset.domain.codi.dto.response.CodiListResponseDto;
 import com.dadada.onecloset.domain.codi.entity.Codi;
 import com.dadada.onecloset.domain.codi.repository.CodiRepository;
@@ -30,8 +31,16 @@ import com.dadada.onecloset.fastapi.FastApiService;
 import com.dadada.onecloset.global.CommonResponse;
 import com.dadada.onecloset.global.DataResponse;
 import com.dadada.onecloset.global.S3Service;
+import com.dadada.onecloset.util.WebClientUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,10 +49,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FittingService {
+
+    @Value("${AI_SERVER}")
+    private String AI_SERVER;
+
+    private final WebClientUtil webClientUtil;
 
     private final FastApiService fastApiService;
     private final UserRepository userRepository;
@@ -79,9 +94,33 @@ public class FittingService {
 
     @Transactional
     public CommonResponse getModelInfoAndUpdateFittingModel(FittingModelRegistDataDto registDataDto){
-        FastApiModelRegistResponseDto responseDto = fastApiService.registFittingModel(registDataDto.getUrl());
-        FittingModel fittingModel = registDataDto.getFittingModel();
-        fittingModel.updateInfo(responseDto);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("image", registDataDto.getUrl());
+        log.info("모델등록 실행전");
+        webClientUtil.post(AI_SERVER + "/fitting/preprocess", jsonObject, String.class)
+        .subscribe(
+                response -> {
+                    System.out.println(response);
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
+                        FastApiModelRegistResponseDto responseDto = objectMapper.readValue(response, FastApiModelRegistResponseDto.class);
+                        FittingModel fittingModel = registDataDto.getFittingModel();
+                        fittingModel.updateInfo(responseDto);
+                        fittingModelRepository.save(fittingModel);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                error -> {
+                    log.error(error.getMessage());
+                    log.error("registFittingModel ERR");
+                }
+        );
+        log.info("모델 등록 실행 후");
+//        FastApiModelRegistResponseDto responseDto = fastApiService.registFittingModel(registDataDto.getUrl());
+//        FittingModel fittingModel = registDataDto.getFittingModel();
+//        fittingModel.updateInfo(responseDto);
         return new CommonResponse(200, "모델이 등록되었습니다.");
     }
 
