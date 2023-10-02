@@ -72,19 +72,6 @@ public class FastApiService {
 
         HttpEntity<String> request = new HttpEntity<>(jsonObject.toString(), headers);
 
-        ///
-//        webClientUtil.post(AI_SERVER + "/fitting/preprocess", request, String.class)
-//                .subscribe(
-//                        response -> {
-//                            System.out.println(response);
-//
-//                        },
-//                        error -> {
-//                            log.error(error.getMessage());
-//                            log.error("registFittingModel ERR");
-//                        }
-//                );
-        ///
         ResponseEntity<String> response = restTemplate.exchange(AI_SERVER + "/fitting/preprocess", HttpMethod.POST, request, String.class);
         JsonElement jsonElement = JsonParser.parseString(Objects.requireNonNull(response.getBody()));
         return FastApiModelRegistResponseDto.of(jsonElement);
