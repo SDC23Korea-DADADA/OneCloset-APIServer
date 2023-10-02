@@ -15,6 +15,7 @@ public class AdminClothesResponseDto {
     private String material;
     private String color;
     private String colerCode;
+    private boolean training;
 
     public static AdminClothesResponseDto of(Clothes clothes) {
 
@@ -26,6 +27,7 @@ public class AdminClothesResponseDto {
                 .material(clothes.getMaterial().getMaterialName())
                 .color(clothes.getColor().getColorName())
                 .colerCode(clothes.getColor().getCode())
+                .training(clothes.getIsTraining())
                 .build();
     }
 
