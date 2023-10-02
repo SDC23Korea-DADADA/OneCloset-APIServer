@@ -45,6 +45,8 @@ public class Clothes extends BaseTimeEntity {
 
     private Boolean isUseData;
 
+    private Boolean isTraining;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -72,6 +74,7 @@ public class Clothes extends BaseTimeEntity {
         this.material = material;
         this.isRegisted = true;
         this.isUseData = false;
+        this.isTraining = true;
     }
 
     public void deleteClothes() {
@@ -96,6 +99,10 @@ public class Clothes extends BaseTimeEntity {
 
     public void useClothesData(){
         this.isUseData = true;
+    }
+
+    public void switchIsTraing() {
+        this.isTraining = !this.isTraining;
     }
 
 }
