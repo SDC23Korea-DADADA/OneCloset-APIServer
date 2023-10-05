@@ -175,6 +175,52 @@ public class FittingService {
 
     }
 
+    public DataResponse<FittingResultResponseDto> fitting2(FittingRequestDto requestDto, Long userId) throws JsonProcessingException {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        FittingModel fittingModel = fittingModelRepository.findByIdAndUserWhereStatusIsTrue(requestDto.getModelId(), user)
+                .orElseThrow(() -> new CustomException(ExceptionType.MODEL_NOT_FOUND));
+
+        FittingCheckDataDto checkDataDto = checkFitting(requestDto, user);
+        if (!checkDataDto.getCheck()) {
+            return new DataResponse<>(400, "가상피팅 가능한 조합이 아닙니다.");
+        }
+
+        String fittingImg = fastApiService.fitting(checkDataDto.getFittingRequestDtoList(), fittingModel);
+
+        FittingResultResponseDto responseDto = FittingResultResponseDto
+                .builder()
+                .originImg(fittingModel.getOriginImg())
+                .fittingImg(fittingImg)
+                .modelId(requestDto.getModelId())
+                .clothesInfoList(checkDataDto.getFittingRequestDtoList())
+                .build();
+
+        Fitting fitting = Fitting
+                .builder()
+                .fittingModel(fittingModel)
+                .fittingImg(fittingImg)
+                .fittingThumnailImg(fittingImg)
+                .user(user)
+                .build();
+
+        Fitting fittingSave = fittingRepository.save(fitting);
+        List<FastApiFittingRequestDto> list = checkDataDto.getFittingRequestDtoList();
+        for (FastApiFittingRequestDto requestDto1 : list) {
+            Clothes clothes = clothesRepository.findByIdAndUser(requestDto1.getClothesId(), user)
+                    .orElseThrow(() -> new CustomException(ExceptionType.CLOTHES_NOT_FOUND));
+            FittingClothes fittingClothes = FittingClothes.builder()
+                    .clothes(clothes)
+                    .fitting(fittingSave)
+                    .build();
+            fittingClothesRepository.save(fittingClothes);
+        }
+
+        return new DataResponse<>(200, "가상피팅 완료 & 저장");
+
+    }
+
     @Transactional
     public DataResponse<Long> saveFitting(FittingSaveRequestDto requestDto, Long userId) {
         User user = userRepository.findById(userId)
