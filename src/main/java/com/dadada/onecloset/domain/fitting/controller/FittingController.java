@@ -48,10 +48,17 @@ public class FittingController {
     }
 
     @PostMapping
-    public DataResponse<FittingResultResponseDto> fitting(Principal principal, @RequestBody FittingRequestDto requestDto) throws JsonProcessingException {
+    public CommonResponse fitting(Principal principal, @RequestBody FittingRequestDto requestDto) throws JsonProcessingException {
         Long userId = Long.parseLong(principal.getName());
         return fittingService.fitting(requestDto, userId);
     }
+
+    @PostMapping("/temp")
+    public CommonResponse fitting2(Principal principal, @RequestBody FittingRequestDto requestDto) throws JsonProcessingException {
+        Long userId = Long.parseLong(principal.getName());
+        return fittingService.fitting2(requestDto, userId);
+    }
+
 
     @DeleteMapping("/{id}")
     public CommonResponse deleteFitting(Principal principal, @PathVariable("id") Long fittingId) {
